@@ -1,107 +1,62 @@
-"use client";
-
-import type React from "react";
-
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, CheckCircle, AlertCircle } from "lucide-react";
-
 export default function UploadPage() {
-  const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState<{
-    url?: string;
-    error?: string;
-  } | null>(null);
-
-  async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    setUploadResult(null);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setUploadResult({ url: result.url });
-      } else {
-        setUploadResult({ error: result.error || "Upload failed" });
-      }
-    } catch (error) {
-      setUploadResult({ error: "Network error occurred" });
-    } finally {
-      setUploading(false);
-    }
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Upload Video to Vercel Blob
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label
-              htmlFor="video-upload"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Select your hero video
-            </label>
-            <input
-              id="video-upload"
-              type="file"
-              accept="video/*"
-              onChange={handleUpload}
-              disabled={uploading}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-            />
+      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+        <h1 className="text-2xl font-bold mb-4">Video Upload Instructions</h1>
+
+        <div className="space-y-4">
+          <p>To upload your large video file, you have several options:</p>
+
+          <div className="border-l-4 border-blue-500 pl-4 py-2">
+            <h2 className="font-semibold">
+              Option 1: Use Vercel Blob (Recommended)
+            </h2>
+            <ol className="list-decimal ml-5 mt-2 space-y-2">
+              <li>
+                Install the Vercel CLI:{" "}
+                <code className="bg-gray-100 px-1">npm i -g vercel</code>
+              </li>
+              <li>
+                Login to Vercel:{" "}
+                <code className="bg-gray-100 px-1">vercel login</code>
+              </li>
+              <li>
+                Upload your video:{" "}
+                <code className="bg-gray-100 px-1">
+                  vercel blob put path/to/video.mp4
+                </code>
+              </li>
+              <li>Copy the URL from the output</li>
+              <li>Update the URL in your video component</li>
+            </ol>
           </div>
 
-          {uploading && (
-            <div className="flex items-center gap-2 text-blue-600">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              Uploading video...
-            </div>
-          )}
+          <div className="border-l-4 border-green-500 pl-4 py-2">
+            <h2 className="font-semibold">
+              Option 2: Use a Video Hosting Service
+            </h2>
+            <ol className="list-decimal ml-5 mt-2 space-y-2">
+              <li>Upload your video to a service like Cloudinary or Vimeo</li>
+              <li>Get the direct video URL</li>
+              <li>Update the URL in your video component</li>
+            </ol>
+          </div>
 
-          {uploadResult?.url && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-              <div className="flex items-center gap-2 text-green-800 mb-2">
-                <CheckCircle className="h-4 w-4" />
-                Upload successful!
-              </div>
-              <p className="text-sm text-green-700 break-all">
-                URL: {uploadResult.url}
-              </p>
-              <p className="text-xs text-green-600 mt-1">
-                Copy this URL to use in your video component
-              </p>
-            </div>
-          )}
-
-          {uploadResult?.error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <div className="flex items-center gap-2 text-red-800">
-                <AlertCircle className="h-4 w-4" />
-                {uploadResult.error}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          <div className="border-l-4 border-orange-500 pl-4 py-2">
+            <h2 className="font-semibold">Option 3: Compress Your Video</h2>
+            <ol className="list-decimal ml-5 mt-2 space-y-2">
+              <li>
+                Use a tool like HandBrake to compress your video to under 5MB
+              </li>
+              <li>Place the compressed video in your public folder</li>
+              <li>
+                Reference it with{" "}
+                <code className="bg-gray-100 px-1">/video-name.mp4</code>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

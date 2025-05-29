@@ -27,6 +27,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: blob.url });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json(
+      {
+        message:
+          "To use Vercel Blob, please install @vercel/blob package and configure it properly.",
+        docs: "https://vercel.com/docs/storage/vercel-blob",
+      },
+      { status: 500 }
+    );
   }
 }
