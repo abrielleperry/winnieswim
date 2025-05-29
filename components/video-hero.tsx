@@ -73,25 +73,6 @@ export function VideoHero() {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Debug info - remove this in production */}
-      <div className="absolute top-4 right-4 z-30 bg-black/80 text-white p-2 rounded text-xs max-w-xs">
-        <div>Loading: {isLoading ? "Yes" : "No"}</div>
-        <div>Loaded: {videoLoaded ? "Yes" : "No"}</div>
-        <div>Error: {videoError ? "Yes" : "No"}</div>
-        <div className="break-all">URL: {videoUrl.slice(-30)}...</div>
-      </div>
-
-      {/* Loading indicator */}
-      {isLoading && !videoError && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-900">
-          <div className="text-center text-white">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p>Loading video...</p>
-            <p className="text-sm text-gray-300 mt-2">
-              This may take a moment for large videos
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Video Background */}
       <video
@@ -118,13 +99,6 @@ export function VideoHero() {
         Your browser does not support the video tag.
       </video>
 
-      {/* Fallback background - always present but hidden when video loads */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 transition-opacity duration-1000 ${
-          videoLoaded && !videoError ? "opacity-0 z-0" : "opacity-100 z-10"
-        }`}
-      />
-
       {/* Error message */}
       {videoError && (
         <div className="absolute top-16 left-4 z-30 bg-red-500 text-white p-3 rounded max-w-sm">
@@ -145,9 +119,6 @@ export function VideoHero() {
         </div>
       )}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-5" />
-
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center px-4">
         <div className="text-center text-white">
@@ -162,12 +133,6 @@ export function VideoHero() {
             We're working hard to bring you an incredible experience. Be the
             first to know when we launch.
           </p>
-          <div className="mt-8">
-            <div className="inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
-              <div className="mr-2 h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-              Coming Soon
-            </div>
-          </div>
         </div>
       </div>
 
