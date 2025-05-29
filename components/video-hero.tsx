@@ -3,7 +3,7 @@
 export function VideoHero() {
   // Replace this with your actual blob URL after upload
   const videoUrl =
-    "https://your-blob-url-here.vercel-storage.com/hero-videos/your-video.mp4";
+    "https://w999nnfdoudixwpn.public.blob.vercel-storage.com/WinnieSwimAd-1o88bmAq1uRKWJ4uG7hLFthoIGIyOW.mp4";
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
