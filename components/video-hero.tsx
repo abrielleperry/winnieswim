@@ -1,6 +1,10 @@
 "use client";
 
 export function VideoHero() {
+  // Replace this with your actual blob URL after upload
+  const videoUrl =
+    "https://your-blob-url-here.vercel-storage.com/hero-videos/your-video.mp4";
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Video Background */}
@@ -10,11 +14,21 @@ export function VideoHero() {
         loop
         playsInline
         className="absolute inset-0 h-full w-full object-cover"
+        onError={(e) => {
+          console.error("Video failed to load:", e);
+          // Hide video element if it fails to load
+          e.currentTarget.style.display = "none";
+        }}
       >
-        <source src="/WinnieSwimAd.mp4" type="video/mp4" />
-        {/* Fallback for browsers that don't support video */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-900" />
+        <source src={videoUrl} type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
+
+      {/* Fallback background (shows when video is loading or fails) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/40" />
 
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center px-4">
@@ -27,9 +41,15 @@ export function VideoHero() {
             </span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg sm:text-xl lg:text-2xl text-gray-200">
-            We are working hard to bring you an incredible experience. Be the
+            We're working hard to bring you an incredible experience. Be the
             first to know when we launch.
           </p>
+          <div className="mt-8">
+            <div className="inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm backdrop-blur-sm">
+              <div className="mr-2 h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+              Coming Soon
+            </div>
+          </div>
         </div>
       </div>
 
