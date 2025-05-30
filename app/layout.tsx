@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import localFont from "next/font/local";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,6 +11,27 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const runlife = localFont({
+  src: "../public/fonts/Runlife-Regular.woff2",
+  variable: "--font-runlife",
+
+  family: "Runlife-Regular", // Add this line
+});
+
+const UTScript = localFont({
+  src: "../public/fonts/UTMynabaliScript.woff",
+  variable: "--font-UTScript",
+
+  family: "UTMynabaliScript", // Add this line
+});
+
+const gloria = localFont({
+  src: "../public/fonts/GloriaRocha.woff",
+  variable: "--font-gloria",
+
+  family: "GloriaRocha", // Add this line
 });
 
 export const metadata: Metadata = {
@@ -25,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${runlife.variable} ${gloria.variable} ${UTScript.variable} antialiased`}
       >
         {children}
       </body>

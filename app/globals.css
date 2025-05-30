@@ -41,6 +41,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-runlife: "Runlife-Regular", sans-serif;
+  --font-gloria: "GloriaRocha", sans-serif;
+  --font-utscript: "UTMynabaliScript", sans-serif;
+  --font-utserif: "UTMynabaliSerif", sans-serif;
 }
 
 :root {
@@ -119,4 +125,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-runlife {
+  font-family: "Runlife-Regular", sans-serif;
+}
+
+.font-gloria {
+  font-family: "GloriaRocha";
+}
+
+.font-UTScript {
+  font-family: "UTMynabaliScript";
+}
+
+.font-UTSerif {
+  font-family: "UTMynabaliSerif";
 }

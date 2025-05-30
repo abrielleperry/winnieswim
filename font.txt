@@ -1,0 +1,15 @@
+.font-runlife {
+  font-family: "Runlife", sans-serif;
+}
+
+.font-gloria {
+  font-family: "GloriaRocha";
+}
+
+.font-UTScript {
+  font-family: "UTMynabaliScript";
+}
+
+.font-UTSerif {
+  font-family: "UTMynabaliSerif";
+}

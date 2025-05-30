@@ -122,16 +122,18 @@ export function VideoHero() {
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center px-4">
         <div className="text-center text-white">
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-            Something Amazing
+          <h1
+            className="mb-6 text-4xl tracking-tight sm:text-6xl lg:text-7xl"
+            style={{ fontFamily: "var(--font-gloria)" }}
+          >
+            East Coast Energy + West Coast Cool
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-              Is Coming
+              COMING SOON
             </span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg sm:text-xl lg:text-2xl text-gray-200">
-            We're working hard to bring you an incredible experience. Be the
-            first to know when we launch.
+            Sign up for your new favorite swimwear reveal.
           </p>
         </div>
       </div>
