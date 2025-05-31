@@ -12,12 +12,12 @@ export function VideoHero() {
 
   // Replace with your GitHub LFS URL
   // Format: https://github.com/USERNAME/REPOSITORY/raw/main/public/videos/hero-video.mp4
-  // const videoUrl =
-  //   "https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/public/videos/hero-video.mp4";
+  const videoUrl =
+    "https://github.com/abrielleperry/winnieswim/raw/main/public/videos/WinnieSwimAd.mp4";
 
   //  Alternative GitHub media URL (often faster)
-  const videoUrl =
-    "https://media.githubusercontent.com/media/abrielleperry/winnieswim/raw/main/public/WinnieSwimAd.mp4";
+  // const videoUrl =
+  // "https://media.githubusercontent.com/media/abrielleperry/winnieswim/main/public/videos/WinnieSwimAd.mp4";
 
   useEffect(() => {
     setVideoError(false);
