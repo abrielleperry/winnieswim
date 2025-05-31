@@ -1,49 +1,71 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
 
 export function VideoHero() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Replace with your GitHub LFS URL
+  // Format: https://github.com/USERNAME/REPOSITORY/raw/main/public/videos/hero-video.mp4
+  // const videoUrl =
+  //   "https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/public/videos/hero-video.mp4";
+
+  //  Alternative GitHub media URL (often faster)
   const videoUrl =
-    "https://w999nnfdoudixwpn.public.blob.vercel-storage.com/WinnieSwimAd-hVZjq6OlXEKfBENJM9YC9bEzTf1gG2.mp4";
+    "https://media.githubusercontent.com/media/abrielleperry/winnieswim/raw/main/public/WinnieSwimAd.mp4";
 
   useEffect(() => {
-    // Test if the video URL is accessible
-    console.log("Testing video URL:", videoUrl);
-    fetch(videoUrl, { method: "HEAD" })
-      .then((response) => {
-        console.log("Video URL response:", response.status, response.ok);
-        console.log("Content-Type:", response.headers.get("content-type"));
-        console.log("Content-Length:", response.headers.get("content-length"));
-        if (!response.ok) {
-          setVideoError(true);
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.error("Video URL test failed:", error);
-        setVideoError(true);
-        setIsLoading(false);
-      });
-  }, [videoUrl]);
+    setVideoError(false);
+    setVideoLoaded(false);
+    setIsLoading(true);
+  }, [retryCount]);
 
   const handleVideoLoad = () => {
-    console.log("✅ Video loaded successfully");
+    console.log("✅ Video loaded successfully from GitHub LFS");
     setVideoLoaded(true);
     setIsLoading(false);
+    setVideoError(false);
   };
 
   const handleVideoError = (
     e: React.SyntheticEvent<HTMLVideoElement, Event>
   ) => {
-    console.error("❌ Video failed to load:", e);
-    console.error("Video error details:", e.currentTarget.error);
+    const video = e.currentTarget;
+    const error = video.error;
+
+    console.error("❌ Video failed to load from GitHub LFS");
+
+    if (error) {
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+
+      switch (error.code) {
+        case MediaError.MEDIA_ERR_ABORTED:
+          console.error("Video loading was aborted");
+          break;
+        case MediaError.MEDIA_ERR_NETWORK:
+          console.error("Network error occurred - check GitHub LFS URL");
+          break;
+        case MediaError.MEDIA_ERR_DECODE:
+          console.error("Video decoding error");
+          break;
+        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          console.error("Video format not supported");
+          break;
+        default:
+          console.error("Unknown video error");
+      }
+    } else {
+      console.error(
+        "No error details available - check if GitHub LFS URL is correct"
+      );
+    }
+
     setVideoError(true);
     setIsLoading(false);
   };
@@ -53,26 +75,26 @@ export function VideoHero() {
     setIsLoading(false);
   };
 
-  const handleLoadStart = () => {
-    console.log("📥 Video load started");
-  };
-
-  const handleProgress = () => {
+  const retryVideoLoad = () => {
+    setRetryCount((prev) => prev + 1);
     if (videoRef.current) {
-      const buffered = videoRef.current.buffered;
-      if (buffered.length > 0) {
-        const loadedPercentage =
-          (buffered.end(0) / videoRef.current.duration) * 100;
-        console.log(
-          `📊 Video loading progress: ${loadedPercentage.toFixed(1)}%`
-        );
-      }
+      videoRef.current.load();
     }
   };
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Debug info - remove this in production */}
+      {/* Loading indicator */}
+      {isLoading && !videoError && (
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-lg drop-shadow-lg">
+              Loading video from GitHub...
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Video Background */}
       <video
@@ -81,7 +103,7 @@ export function VideoHero() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         crossOrigin="anonymous"
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
           videoLoaded && !videoError ? "opacity-100 z-10" : "opacity-0 z-0"
@@ -89,9 +111,10 @@ export function VideoHero() {
         onLoadedData={handleVideoLoad}
         onCanPlay={handleCanPlay}
         onError={handleVideoError}
-        onLoadStart={handleLoadStart}
-        onProgress={handleProgress}
-        onLoadedMetadata={() => console.log("📋 Video metadata loaded")}
+        onLoadStart={() => console.log("📥 Video load started from GitHub LFS")}
+        onLoadedMetadata={() =>
+          console.log("📋 Video metadata loaded from GitHub LFS")
+        }
         onWaiting={() => console.log("⏳ Video waiting for data")}
         onPlaying={() => console.log("▶️ Video started playing")}
       >
@@ -101,21 +124,34 @@ export function VideoHero() {
 
       {/* Error message */}
       {videoError && (
-        <div className="absolute top-16 left-4 z-30 bg-red-500 text-white p-3 rounded max-w-sm">
-          <div className="font-bold">Video Error</div>
-          <div className="text-sm">Check browser console for details</div>
-          <button
-            onClick={() => {
-              setVideoError(false);
-              setIsLoading(true);
-              if (videoRef.current) {
-                videoRef.current.load();
-              }
-            }}
-            className="mt-2 bg-red-700 px-2 py-1 rounded text-xs"
-          >
-            Retry
-          </button>
+        <div className="absolute top-4 right-4 z-30 bg-red-500/90 backdrop-blur-sm text-white p-4 rounded-lg max-w-sm">
+          <div className="flex items-start gap-3">
+            <svg
+              className="h-5 w-5 text-red-200 mt-0.5 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div>
+              <div className="font-semibold text-sm">
+                GitHub LFS Video Failed
+              </div>
+              <div className="text-xs text-red-200 mt-1">
+                Check GitHub LFS URL. Retry: {retryCount}
+              </div>
+              <button
+                onClick={retryVideoLoad}
+                className="mt-2 bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-medium transition-colors"
+              >
+                Retry Loading
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -128,7 +164,7 @@ export function VideoHero() {
           >
             East Coast Energy + West Coast Cool
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9FB8B0] to-[#F28125]">
               COMING SOON
             </span>
           </h1>
