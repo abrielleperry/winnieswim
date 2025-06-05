@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -12,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { CheckCircle, Mail, User, Phone } from "lucide-react";
 import { signupForUpdates } from "@/app/actions/signup";
+
+import { Button } from "@/components/ui/button";
 
 export function SignupForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -30,6 +31,8 @@ export function SignupForm() {
         setError(result.error || "Something went wrong. Please try again.");
       }
     } catch (error) {
+      console.error("Signup form submission failed:", error);
+
       setError("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
@@ -42,11 +45,11 @@ export function SignupForm() {
         <Card className="text-center border-green-200 bg-green-50 max-w-md w-full">
           <CardContent className="pt-6">
             <CheckCircle className="mx-auto h-16 w-16 text-green-600 mb-4" />
-            <h3 className="text-2xl font-bold text-green-800 mb-2">
-              You're on the list!
+            <h3 className="text-2xl text-green-800 mb-2">
+              You are on the list!
             </h3>
-            <p className="text-green-700">
-              Thanks for signing up. We'll notify you as soon as we launch.
+            <p className="text-green-700 ">
+              Thanks for signing up. We will notify you as soon as we launch.
             </p>
           </CardContent>
         </Card>
@@ -58,17 +61,14 @@ export function SignupForm() {
     <div className="flex items-center justify-center min-h-screen px-4">
       <Card className="shadow-xl border-0 max-w-md w-full">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-3xl font-bold text-gray-900">
-            Stay in the Loop
+          <CardTitle className="text-3xl text-gray-900 font-prestisemibold">
+            <span>WinnieSwim is</span>
+            <br />
+            <span>Almost Here</span>
           </CardTitle>
-          <CardDescription className="text-lg text-gray-600">
-            Be the first to experience what we're building. No spam, just
-            updates that matter.
+          <CardDescription className="text-lg text-gray-800 font-prestisemibold">
+            Be the first to hear about updates and shop our launch collection.
           </CardDescription>
-          <p className="text-sm text-gray-500 mt-1">
-            Join our exclusive community of early adopters and help shape our
-            product.
-          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <form action={handleSubmit} className="space-y-4">
@@ -151,10 +151,9 @@ export function SignupForm() {
                 />
               </div>
             </div>
-
             <Button
               type="submit"
-              className="w-full h-12 text-lg font-semibold bg-orange-primary hover:bg-orange-hover text-white border-0"
+              className="w-full h-12 text-lg font-semibold bg-[#F28125] hover:bg-[#F28125] text-white border-0"
               disabled={isLoading}
             >
               {isLoading ? "Signing Up..." : "Join the List"}

@@ -2,31 +2,52 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 export function VideoHero() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Replace with your GitHub LFS URL
-  // Format: https://github.com/USERNAME/REPOSITORY/raw/main/public/videos/hero-video.mp4
-  const videoUrl =
-    "https://github.com/abrielleperry/winnieswim/raw/main/public/videos/WinnieSwimAd.mp4";
+  // Multiple URL formats to try
+  const videoUrls = [
+    "https://github.com/abrielleperry/winnieswim/raw/main/public/videos/WinnieSwimAdNoLogo.mp4",
+    "https://media.githubusercontent.com/media/abrielleperry/winnieswim/main/public/videos/WinnieSwimAdNoLogo.mp4",
+    "https://raw.githubusercontent.com/abrielleperry/winnieswim/main/public/videos/WinnieSwimAdNoLogo.mp4",
+  ];
 
-  //  Alternative GitHub media URL (often faster)
-  // const videoUrl =
-  // "https://media.githubusercontent.com/media/abrielleperry/winnieswim/main/public/videos/WinnieSwimAd.mp4";
+  const currentVideoUrl = videoUrls[currentUrlIndex];
 
   useEffect(() => {
+    // Test URL accessibility
+    const testUrl = async () => {
+      console.log(
+        `Testing URL ${currentUrlIndex + 1}/${videoUrls.length}:`,
+        currentVideoUrl
+      );
+
+      try {
+        const response = await fetch(currentVideoUrl, {
+          method: "HEAD",
+          mode: "no-cors", // Avoid CORS issues for testing
+        });
+        console.log("URL test response:", response);
+      } catch (error) {
+        console.error("URL test failed:", error);
+      }
+    };
+
+    testUrl();
     setVideoError(false);
     setVideoLoaded(false);
     setIsLoading(true);
-  }, [retryCount]);
+  }, [currentUrlIndex, retryCount, currentVideoUrl]);
 
   const handleVideoLoad = () => {
-    console.log("✅ Video loaded successfully from GitHub LFS");
+    console.log("✅ Video loaded successfully from:", currentVideoUrl);
     setVideoLoaded(true);
     setIsLoading(false);
     setVideoError(false);
@@ -38,7 +59,10 @@ export function VideoHero() {
     const video = e.currentTarget;
     const error = video.error;
 
-    console.error("❌ Video failed to load from GitHub LFS");
+    console.error(
+      `❌ Video failed to load from URL ${currentUrlIndex + 1}:`,
+      currentVideoUrl
+    );
 
     if (error) {
       console.error("Error code:", error.code);
@@ -49,7 +73,7 @@ export function VideoHero() {
           console.error("Video loading was aborted");
           break;
         case MediaError.MEDIA_ERR_NETWORK:
-          console.error("Network error occurred - check GitHub LFS URL");
+          console.error("Network error - URL might be inaccessible");
           break;
         case MediaError.MEDIA_ERR_DECODE:
           console.error("Video decoding error");
@@ -61,13 +85,18 @@ export function VideoHero() {
           console.error("Unknown video error");
       }
     } else {
-      console.error(
-        "No error details available - check if GitHub LFS URL is correct"
-      );
+      console.error("No error details - likely CORS or 404 error");
     }
 
-    setVideoError(true);
-    setIsLoading(false);
+    // Try next URL if available
+    if (currentUrlIndex < videoUrls.length - 1) {
+      console.log("Trying next URL...");
+      setCurrentUrlIndex((prev) => prev + 1);
+    } else {
+      console.error("All URLs failed");
+      setVideoError(true);
+      setIsLoading(false);
+    }
   };
 
   const handleCanPlay = () => {
@@ -77,50 +106,57 @@ export function VideoHero() {
 
   const retryVideoLoad = () => {
     setRetryCount((prev) => prev + 1);
+    setCurrentUrlIndex(0); // Reset to first URL
     if (videoRef.current) {
       videoRef.current.load();
     }
   };
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-96 md:h-[500px] lg:h-[600px] w-full overflow-hidden">
       {/* Loading indicator */}
       {isLoading && !videoError && (
         <div className="absolute inset-0 flex items-center justify-center z-20">
           <div className="text-center text-white">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p className="text-lg drop-shadow-lg">
-              Loading video from GitHub...
+              {"Loading video from GitHub... (URL "}
+              {currentUrlIndex + 1}/{videoUrls.length})
             </p>
           </div>
         </div>
       )}
 
-      {/* Video Background */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        crossOrigin="anonymous"
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-          videoLoaded && !videoError ? "opacity-100 z-10" : "opacity-0 z-0"
-        }`}
-        onLoadedData={handleVideoLoad}
-        onCanPlay={handleCanPlay}
-        onError={handleVideoError}
-        onLoadStart={() => console.log("📥 Video load started from GitHub LFS")}
-        onLoadedMetadata={() =>
-          console.log("📋 Video metadata loaded from GitHub LFS")
-        }
-        onWaiting={() => console.log("⏳ Video waiting for data")}
-        onPlaying={() => console.log("▶️ Video started playing")}
-      >
-        <source src={videoUrl} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {/* Centered Video Container */}
+      <div className="absolute inset-0 flex items-center justify-center z-5 pt-30 pb-20">
+        <div className="relative w-full max-w-4xl mx-auto px-4">
+          <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
+            <video
+              ref={videoRef}
+              autoPlay
+              muted={true}
+              loop
+              playsInline
+              preload="metadata"
+              className={`w-full h-full object-cover transition-opacity duration-1000 ${
+                videoLoaded && !videoError ? "opacity-100" : "opacity-0"
+              }`}
+              onLoadedData={handleVideoLoad}
+              onCanPlay={handleCanPlay}
+              onError={handleVideoError}
+              onLoadStart={() =>
+                console.log("📥 Video load started from:", currentVideoUrl)
+              }
+              onLoadedMetadata={() => console.log("📋 Video metadata loaded")}
+              onWaiting={() => console.log("⏳ Video waiting for data")}
+              onPlaying={() => console.log("▶️ Video started playing")}
+            >
+              <source src={currentVideoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
 
       {/* Error message */}
       {videoError && (
@@ -130,6 +166,7 @@ export function VideoHero() {
               className="h-5 w-5 text-red-200 mt-0.5 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
+              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"
@@ -139,58 +176,37 @@ export function VideoHero() {
             </svg>
             <div>
               <div className="font-semibold text-sm">
-                GitHub LFS Video Failed
+                All GitHub URLs Failed
               </div>
               <div className="text-xs text-red-200 mt-1">
-                Check GitHub LFS URL. Retry: {retryCount}
+                Check if file exists and repo is public. Retry: {retryCount}
               </div>
               <button
                 onClick={retryVideoLoad}
                 className="mt-2 bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-medium transition-colors"
               >
-                Retry Loading
+                Retry All URLs
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full items-center justify-center px-4">
-        <div className="text-center text-white">
-          <h1
-            className="mb-6 text-4xl tracking-tight sm:text-6xl lg:text-7xl"
-            style={{ fontFamily: "var(--font-gloria)" }}
-          >
-            East Coast Energy + West Coast Cool
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9FB8B0] to-[#F28125]">
-              COMING SOON
-            </span>
+      {/* Content Overlay - Centered in the viewport */}
+      <div className="relative z-10 w-full h-full pt-16 flex flex-col items-center justify-center">
+        {/* Logo and Title - Centered */}
+        <div className="text-center">
+          <Image
+            src="/WSLogo-White.png"
+            alt="Winnie Swim Logo"
+            width={200}
+            height={200}
+            className="mx-auto mb-8"
+            priority
+          />
+          <h1 className="text-4xl font-prestiregular tracking-tight sm:text-6xl lg:text-7xl text-white text-center mx-auto">
+            COMING SOON
           </h1>
-          <p className="mx-auto max-w-2xl text-lg sm:text-xl lg:text-2xl text-gray-200">
-            Sign up for your new favorite swimwear reveal.
-          </p>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-10">
-        <div className="flex flex-col items-center text-white/80">
-          <span className="text-sm mb-2">Get Notified</span>
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
         </div>
       </div>
     </section>

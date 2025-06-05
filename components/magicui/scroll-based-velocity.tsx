@@ -17,6 +17,7 @@ interface VelocityScrollProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultVelocity?: number;
   className?: string;
   numRows?: number;
+  fontFamily?: string;
 }
 
 interface ParallaxProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -101,16 +102,22 @@ function ParallaxText({
 }
 
 export function VelocityScroll({
-  defaultVelocity = 3,
+  defaultVelocity = 2,
   numRows = 2,
   children,
   className,
+  fontFamily,
   ...props
 }: VelocityScrollProps) {
+  // Instead of applying fontFamily as an inline style,
+  // we'll use it to conditionally add the appropriate class
+  const fontClass = fontFamily ? `font-${fontFamily}` : "";
+
   return (
     <div
       className={cn(
-        "relative w-full text-4xl font-bold tracking-[-0.02em] md:text-7xl md:leading-[5rem]",
+        "relative w-full text-4xl font-bold tracking-[-0.02em] md:leading-[5rem] ",
+        fontClass,
         className
       )}
       {...props}

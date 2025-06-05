@@ -43,10 +43,15 @@
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-runlife: "Runlife-Regular", sans-serif;
-  --font-gloria: "GloriaRocha", sans-serif;
-  --font-utscript: "UTMynabaliScript", sans-serif;
-  --font-utserif: "UTMynabaliSerif", sans-serif;
+  --font-runlife: var(--font-runlife);
+  --font-gloria: var(--font-gloria);
+  --font-utscript: var(--font-utscript);
+  --font-rekalgera: var(--font-rekalgera);
+  --font-prestiblack: var(--font-prestiblack);
+  --font-prestiregular: var(--font-prestiregular);
+  --font-prestisemibold: var(--font-prestisemibold);
+  --font-hopeless-romantic: var(--font-hopeless-romantic);
+  --font-prestibold: var(--font-prestibold);
 }
 
 :root {
@@ -127,18 +132,37 @@
   }
 }
 
-.font-runlife {
-  font-family: "Runlife-Regular", sans-serif;
-}
+/* Custom font utility classes */
+@layer utilities {
+  .font-runlife {
+    font-family: var(--font-runlife), sans-serif;
+  }
 
-.font-gloria {
-  font-family: "GloriaRocha";
-}
+  .font-gloria {
+    font-family: var(--font-gloria), serif;
+  }
 
-.font-UTScript {
-  font-family: "UTMynabaliScript";
-}
+  .font-utscript {
+    font-family: var(--font-utscript), cursive;
+  }
 
-.font-UTSerif {
-  font-family: "UTMynabaliSerif";
+  .font-rekalgera {
+    font-family: var(--font-rekalgera), sans-serif;
+  }
+
+  .font-prestiblack {
+    font-family: var(--font-prestiblack), sans-serif;
+  }
+
+  .font-prestiregular {
+    font-family: var(--font-prestiregular), sans-serif;
+  }
+
+  .font-prestisemibold {
+    font-family: var(--font-prestisemibold), sans-serif;
+  }
+
+  .font-hopeless-romantic {
+    font-family: var(--font-hopeless-romantic), cursive;
+  }
 }

@@ -1,3 +1,4 @@
+import type React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -16,22 +17,55 @@ const geistMono = Geist_Mono({
 const runlife = localFont({
   src: "../public/fonts/Runlife-Regular.woff2",
   variable: "--font-runlife",
-
-  family: "Runlife-Regular", // Add this line
+  display: "swap",
 });
 
 const UTScript = localFont({
   src: "../public/fonts/UTMynabaliScript.woff",
-  variable: "--font-UTScript",
-
-  family: "UTMynabaliScript", // Add this line
+  variable: "--font-utscript",
+  display: "swap",
 });
 
 const gloria = localFont({
   src: "../public/fonts/GloriaRocha.woff",
   variable: "--font-gloria",
+  display: "swap",
+});
 
-  family: "GloriaRocha", // Add this line
+const rekalgera = localFont({
+  src: "../public/fonts/Rekalgera-Regular.woff",
+  variable: "--font-rekalgera",
+  display: "swap",
+});
+
+const prestiblack = localFont({
+  src: "../public/fonts/PrestiDisplay-Black.woff",
+  variable: "--font-prestiblack",
+  display: "swap",
+});
+
+const prestiregular = localFont({
+  src: "../public/fonts/PrestiDisplay-Regular.woff",
+  variable: "--font-prestiregular",
+  display: "swap",
+});
+
+const prestisemibold = localFont({
+  src: "../public/fonts/PrestiDisplay-Semibold.woff",
+  variable: "--font-prestisemibold",
+  display: "swap",
+});
+
+const prestibold = localFont({
+  src: "../public/fonts/PrestiDisplay-Bold.woff",
+  variable: "--font-prestibold",
+  display: "swap",
+});
+
+const hopelessromantic = localFont({
+  src: "../public/fonts/HopelessRomanticSociety.woff",
+  variable: "--font-hopeless-romantic",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +81,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${runlife.variable} ${gloria.variable} ${UTScript.variable} antialiased`}
+        className={`${geistSans.variable} ${prestibold.variable} ${geistMono.variable} ${runlife.variable} ${gloria.variable} ${UTScript.variable} ${rekalgera.variable} ${prestiblack.variable} ${prestiregular.variable} ${prestisemibold.variable} ${hopelessromantic.variable} antialiased`}
       >
         {children}
       </body>

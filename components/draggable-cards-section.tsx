@@ -8,27 +8,32 @@ export function DraggableCardsSection() {
     {
       title: "Premium Quality",
       image: "/1.jpg?height=320&width=320",
-      className: "absolute top-10 left-[10%] rotate-[-5deg]",
+      className: "absolute top-16 left-[15%] rotate-[-5deg]",
     },
     {
       title: "Sustainable Materials",
       image: "/2.jpg?height=320&width=320",
-      className: "absolute top-40 left-[15%] rotate-[-7deg]",
+      className: "absolute bottom-32 left-[10%] rotate-[-7deg]",
     },
     {
       title: "Perfect Fit",
       image: "/3.jpg?height=320&width=320",
-      className: "absolute top-5 left-[30%] rotate-[8deg]",
+      className: "absolute top-12 left-[55%] rotate-[8deg]",
     },
     {
       title: "Beach Ready",
+      image: "/7.jpg?height=320&width=320",
+      className: "absolute top-24 left-[40%] rotate-[10deg]",
+    },
+    {
+      title: "East Coast Energy",
       image: "/5.jpg?height=320&width=320",
-      className: "absolute top-32 left-[45%] rotate-[10deg]",
+      className: "absolute bottom-24 left-[50%] rotate-[2deg]",
     },
     {
       title: "Summer Vibes",
       image: "/6.jpg?height=320&width=320",
-      className: "absolute top-20 right-[25%] rotate-[2deg]",
+      className: "absolute bottom-16 left-[25%] rotate-[2deg]",
     },
   ];
 
@@ -50,8 +55,8 @@ export function DraggableCardsSection() {
             className="pointer-events-none relative z-10 h-64 w-64 object-cover rounded-lg"
           />
           <h3
-            className="mt-4 text-center text-xl font-bold text-neutral-700 dark:text-neutral-300"
-            style={{ fontFamily: "var(--font-UTScript)" }}
+            className="mt-6 text-center text-xl font-bold text-neutral-700 dark:text-neutral-300"
+            style={{ fontFamily: "var(--font-hopeless-romantic)" }}
           >
             {item.title}
           </h3>
