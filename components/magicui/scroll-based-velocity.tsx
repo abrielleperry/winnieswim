@@ -109,14 +109,16 @@ export function VelocityScroll({
   fontFamily,
   ...props
 }: VelocityScrollProps) {
-  // Instead of applying fontFamily as an inline style,
-  // we'll use it to conditionally add the appropriate class
   const fontClass = fontFamily ? `font-${fontFamily}` : "";
 
   return (
     <div
       className={cn(
-        "relative w-full text-4xl font-bold tracking-[-0.02em] md:leading-[5rem] ",
+        "relative w-full flex flex-col gap-2",
+        // Responsive typography and line height
+        "text-xl sm:text-2xl md:text-4xl ",
+        "leading-[2.5rem] sm:leading-[5rem] md:leading-[5rem] lg:leading-[5rem]",
+        "tracking-[-0.02em] font-bold",
         fontClass,
         className
       )}

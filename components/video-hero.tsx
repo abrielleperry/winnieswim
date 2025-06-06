@@ -194,19 +194,20 @@ export function VideoHero() {
 
       {/* Content Overlay - Centered in the viewport */}
       <div className="relative z-10 w-full h-full pt-16 flex flex-col items-center justify-center">
-        {/* Logo and Title - Centered */}
-        <div className="text-center">
-          <Image
-            src="/WSLogo-White.png"
-            alt="Winnie Swim Logo"
-            width={200}
-            height={200}
-            className="mx-auto mb-8"
-            priority
-          />
-          <h1 className="text-4xl font-prestiregular tracking-tight sm:text-6xl lg:text-7xl text-white text-center mx-auto">
-            COMING SOON
-          </h1>
+        <div className="w-full px-4 sm:px-6 lg:px-8 text-center">
+          <div className="mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto">
+            <Image
+              src="/WSLogo-White.png"
+              alt="Winnie Swim Logo"
+              width={200}
+              height={200}
+              className="mx-auto mb-2 sm:mb-8 w-32 sm:w-40 md:w-48 lg:w-52 "
+              priority
+            />
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-prestiregular tracking-tight text-white">
+              COMING SOON
+            </h1>
+          </div>
         </div>
       </div>
     </section>

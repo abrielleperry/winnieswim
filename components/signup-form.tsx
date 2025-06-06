@@ -153,7 +153,7 @@ export function SignupForm() {
             </div>
             <Button
               type="submit"
-              className="w-full h-12 text-lg font-semibold bg-[#F28125] hover:bg-[#F28125] text-white border-0"
+              className="w-full h-12 text-lg font-semibold bg-[#9FB8B0] hover:bg-[#9FB8B0] text-white border-0"
               disabled={isLoading}
             >
               {isLoading ? "Signing Up..." : "Join the List"}
