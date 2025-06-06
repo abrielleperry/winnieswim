@@ -64,7 +64,6 @@ export function SignupForm() {
                   id="firstName"
                   name="firstName"
                   type="text"
-                  placeholder="Enter your first name"
                   className="pl-10 h-12"
                   required
                 />
@@ -84,7 +83,6 @@ export function SignupForm() {
                   id="lastName"
                   name="lastName"
                   type="text"
-                  placeholder="Enter your last name"
                   className="pl-10 h-12"
                   required
                 />
@@ -104,7 +102,6 @@ export function SignupForm() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Enter your email address"
                   className="pl-10 h-12"
                   required
                 />
@@ -124,7 +121,6 @@ export function SignupForm() {
                   id="phone"
                   name="phone"
                   type="tel"
-                  placeholder="Enter your phone number"
                   className="pl-10 h-12"
                   required
                 />
