@@ -22,10 +22,9 @@ export function SignupForm() {
     setError(null);
 
     try {
-      const result = await signupForUpdates(formData); // <-- this was missing
+      const result = await signupForUpdates(formData);
 
       if (result.success) {
-        // Do something if needed, like showing a success message or redirecting
       } else {
         setError(result.error || "Something went wrong. Please try again.");
       }
