@@ -29,7 +29,6 @@ export const DraggableCardBody = ({
     bottom: 0,
   });
 
-  // physics biatch
   const velocityX = useVelocity(mouseX);
   const velocityY = useVelocity(mouseY);
 
@@ -47,19 +46,16 @@ export const DraggableCardBody = ({
     useTransform(mouseX, [-300, 300], [-25, 25]),
     springConfig
   );
-
   const opacity = useSpring(
     useTransform(mouseX, [-300, 0, 300], [0.8, 1, 0.8]),
     springConfig
   );
-
   const glareOpacity = useSpring(
     useTransform(mouseX, [-300, 0, 300], [0.2, 0, 0.2]),
     springConfig
   );
 
   useEffect(() => {
-    // Update constraints when component mounts or window resizes
     const updateConstraints = () => {
       if (typeof window !== "undefined") {
         setConstraints({
@@ -72,14 +68,8 @@ export const DraggableCardBody = ({
     };
 
     updateConstraints();
-
-    // Add resize listener
     window.addEventListener("resize", updateConstraints);
-
-    // Clean up
-    return () => {
-      window.removeEventListener("resize", updateConstraints);
-    };
+    return () => window.removeEventListener("resize", updateConstraints);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -93,10 +83,8 @@ export const DraggableCardBody = ({
       };
     const centerX = left + width / 2;
     const centerY = top + height / 2;
-    const deltaX = clientX - centerX;
-    const deltaY = clientY - centerY;
-    mouseX.set(deltaX);
-    mouseY.set(deltaY);
+    mouseX.set(clientX - centerX);
+    mouseY.set(clientY - centerY);
   };
 
   const handleMouseLeave = () => {
@@ -109,30 +97,22 @@ export const DraggableCardBody = ({
       ref={cardRef}
       drag
       dragConstraints={constraints}
-      onDragStart={() => {
-        document.body.style.cursor = "grabbing";
-      }}
+      onDragStart={() => (document.body.style.cursor = "grabbing")}
       onDragEnd={(event, info) => {
         document.body.style.cursor = "default";
 
         controls.start({
           rotateX: 0,
           rotateY: 0,
-          transition: {
-            type: "spring",
-            ...springConfig,
-          },
+          transition: { type: "spring", ...springConfig },
         });
-        const currentVelocityX = velocityX.get();
-        const currentVelocityY = velocityY.get();
 
-        const velocityMagnitude = Math.sqrt(
-          currentVelocityX * currentVelocityX +
-            currentVelocityY * currentVelocityY
-        );
+        const vx = velocityX.get();
+        const vy = velocityY.get();
+        const velocityMagnitude = Math.sqrt(vx * vx + vy * vy);
         const bounce = Math.min(0.8, velocityMagnitude / 1000);
 
-        animate(info.point.x, info.point.x + currentVelocityX * 0.3, {
+        animate(info.point.x, info.point.x + vx * 0.3, {
           duration: 0.8,
           ease: [0.2, 0, 0, 1],
           bounce,
@@ -141,8 +121,7 @@ export const DraggableCardBody = ({
           damping: 15,
           mass: 0.8,
         });
-
-        animate(info.point.y, info.point.y + currentVelocityY * 0.3, {
+        animate(info.point.y, info.point.y + vy * 0.3, {
           duration: 0.8,
           ease: [0.2, 0, 0, 1],
           bounce,
@@ -152,26 +131,19 @@ export const DraggableCardBody = ({
           mass: 0.8,
         });
       }}
-      style={{
-        rotateX,
-        rotateY,
-        opacity,
-        willChange: "transform",
-      }}
+      style={{ rotateX, rotateY, opacity, willChange: "transform" }}
       animate={controls}
       whileHover={{ scale: 1.02 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative min-h-96 w-80 overflow-hidden rounded-md bg-neutral-100 p-6 shadow-2xl transform-3d dark:bg-neutral-900",
+        "relative min-h-72 sm:min-h-80 md:min-h-96 w-64 sm:w-72 md:w-80 overflow-hidden rounded-md bg-neutral-100 p-6 shadow-2xl transform-3d dark:bg-neutral-900",
         className
       )}
     >
       {children}
       <motion.div
-        style={{
-          opacity: glareOpacity,
-        }}
+        style={{ opacity: glareOpacity }}
         className="pointer-events-none absolute inset-0 bg-white select-none"
       />
     </motion.div>
