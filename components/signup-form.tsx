@@ -9,13 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Mail, User, Phone } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, Mail, User, Phone } from "lucide-react";
 import { signupForUpdates } from "@/app/actions/signup";
-
-import { Button } from "@/components/ui/button";
+import { AnimatedSubscribeButton } from "@/components/magicui/animated-subscribe-button";
 
 export function SignupForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,37 +22,19 @@ export function SignupForm() {
     setError(null);
 
     try {
-      const result = await signupForUpdates(formData);
+      const result = await signupForUpdates(formData); // <-- this was missing
+
       if (result.success) {
-        setIsSubmitted(true);
+        // Do something if needed, like showing a success message or redirecting
       } else {
         setError(result.error || "Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Signup form submission failed:", error);
-
       setError("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
-  }
-
-  if (isSubmitted) {
-    return (
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <Card className="text-center border-green-200 bg-green-50 max-w-md w-full">
-          <CardContent className="pt-6">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-600 mb-4" />
-            <h3 className="text-2xl text-green-800 mb-2">
-              You are on the list!
-            </h3>
-            <p className="text-green-700 ">
-              Thanks for signing up. We will notify you as soon as we launch.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
   }
 
   return (
@@ -151,13 +131,26 @@ export function SignupForm() {
                 />
               </div>
             </div>
-            <Button
-              type="submit"
-              className="w-full h-12 text-lg font-semibold bg-[#9FB8B0] hover:bg-[#9FB8B0] text-white border-0"
+            <AnimatedSubscribeButton
               disabled={isLoading}
+              className="w-full h-12 text-lg font-semibold bg-[#9FB8B0] hover:bg-[#9FB8B0] text-white border-0"
+              type="submit"
             >
-              {isLoading ? "Signing Up..." : "Join the List"}
-            </Button>
+              <span className="group inline-flex items-center">
+                {isLoading ? (
+                  "Signing Up..."
+                ) : (
+                  <>
+                    Join the List
+                    <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </>
+                )}
+              </span>
+              <span className="group inline-flex items-center">
+                Subscribed
+                <CheckIcon className="ml-1 size-4 text-white" />
+              </span>
+            </AnimatedSubscribeButton>
           </form>
 
           {error && (
