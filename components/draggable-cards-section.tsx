@@ -9,37 +9,37 @@ export function DraggableCardsSection() {
       title: "Premium Quality",
       image: "/1.jpg?height=320&width=320",
       className:
-        "absolute top-28 left-[0%] sm:top-16 sm:left-[15%] rotate-[-5deg]",
+        "absolute top-28 left-[0%] lg:top-16 lg:left-[15%] rotate-[-5deg]",
     },
     {
       title: "Sustainable Materials",
       image: "/2.jpg?height=320&width=320",
       className:
-        "absolute bottom-44 left-[0%] sm:bottom-32 sm:left-[10%] rotate-[-7deg]",
+        "absolute bottom-44 left-[0%] lg:bottom-32 lg:left-[10%] rotate-[-7deg]",
     },
     {
       title: "Perfect Fit",
       image: "/3.jpg?height=320&width=320",
       className:
-        "absolute top-40 left-[40%] sm:top-12 sm:left-[55%] rotate-[8deg]",
+        "absolute top-40 left-[40%] lg:top-12 lg:left-[55%] rotate-[8deg]",
     },
     {
       title: "Beach Ready",
       image: "/7.jpg?height=320&width=320",
       className:
-        "absolute top-56 left-[20%] sm:top-24 sm:left-[40%] rotate-[10deg]",
+        "absolute top-56 left-[20%] lg:top-24 lg:left-[40%] rotate-[10deg]",
     },
     {
       title: "East Coast Energy",
       image: "/5.jpg?height=320&width=320",
       className:
-        "absolute bottom-40 left-[35%] sm:bottom-24 sm:left-[50%] rotate-[2deg]",
+        "absolute bottom-40 left-[35%] lg:bottom-24 lg:left-[50%] rotate-[2deg]",
     },
     {
       title: "Summer Vibes",
       image: "/6.jpg?height=320&width=320",
       className:
-        "absolute bottom-28 left-[10%] sm:bottom-16 sm:left-[25%] rotate-[2deg]",
+        "absolute bottom-28 left-[10%] lg:bottom-16 lg:left-[25%] rotate-[2deg]",
     },
   ];
 

@@ -7,7 +7,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { CheckIcon, ChevronRightIcon, Mail, User, Phone } from "lucide-react";
 import { signupForUpdates } from "@/app/actions/signup";
@@ -40,12 +39,12 @@ export function SignupForm() {
     <div className="flex items-center justify-center min-h-screen px-4">
       <Card className="shadow-xl border-0 max-w-md w-full">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-3xl text-gray-900 font-prestisemibold">
+          <CardDescription className="text-3xl text-gray-900 font-prestiregular">
             <span>WinnieSwim is</span>
             <br />
             <span>Almost Here</span>
-          </CardTitle>
-          <CardDescription className="text-lg text-gray-800 font-prestisemibold">
+          </CardDescription>
+          <CardDescription className="text-lg text-gray-800 font-prestiregular">
             Be the first to hear about updates and shop our launch collection.
           </CardDescription>
         </CardHeader>
