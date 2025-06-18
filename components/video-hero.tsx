@@ -113,7 +113,7 @@ export function VideoHero() {
   };
 
   return (
-    <section className="relative h-96 md:h-[500px] lg:h-[600px] w-full overflow-hidden">
+    <section className="relative w-full aspect-video max-h-[600px] overflow-hidden bg-white">
       {/* Loading indicator */}
       {isLoading && !videoError && (
         <div className="absolute inset-0 flex items-center justify-center z-20">
@@ -128,13 +128,13 @@ export function VideoHero() {
       )}
 
       {/* Centered Video Container */}
-      <div className="absolute inset-0 flex items-center justify-center z-5 pt-30 pb-20">
-        <div className="relative w-full max-w-4xl mx-auto px-4">
-          <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
+      <div className="absolute inset-0 flex items-center justify-center z-5">
+        <div className="relative w-full h-full">
+          <div className="relative w-full h-full overflow-hidden">
             <video
               ref={videoRef}
               autoPlay
-              muted={true}
+              muted
               loop
               playsInline
               preload="metadata"
@@ -144,12 +144,6 @@ export function VideoHero() {
               onLoadedData={handleVideoLoad}
               onCanPlay={handleCanPlay}
               onError={handleVideoError}
-              onLoadStart={() =>
-                console.log("📥 Video load started from:", currentVideoUrl)
-              }
-              onLoadedMetadata={() => console.log("📋 Video metadata loaded")}
-              onWaiting={() => console.log("⏳ Video waiting for data")}
-              onPlaying={() => console.log("▶️ Video started playing")}
             >
               <source src={currentVideoUrl} type="video/mp4" />
               Your browser does not support the video tag.
@@ -201,10 +195,10 @@ export function VideoHero() {
               alt="Winnie Swim Logo"
               width={200}
               height={200}
-              className="mx-auto mb-2 sm:mb-8 w-32 sm:w-40 md:w-48 lg:w-52 "
+              className="mx-auto mb-2 sm:mb-8 w-25 sm:w-40 md:w-48 lg:w-52 "
               priority
             />
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-prestiregular tracking-tight text-white">
+            <h1 className="text-2xl pb-6 sm:text-5xl md:text-6xl lg:text-7xl font-prestiregular tracking-tight text-white">
               COMING SOON
             </h1>
           </div>

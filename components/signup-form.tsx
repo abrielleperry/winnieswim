@@ -36,13 +36,14 @@ export function SignupForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
-      <Card className="shadow-xl border-0 max-w-md w-full">
+    <div className="flex items-center justify-center px-4 py-8 sm:py-12 md:py-20 lg:py-28">
+      <Card
+        className=" border-0 max-w-md w-full"
+        style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 20px 30px" }}
+      >
         <CardHeader className="text-center pb-2">
-          <CardDescription className="text-3xl text-gray-900 font-prestiregular">
-            <span>WinnieSwim is</span>
-            <br />
-            <span>Almost Here</span>
+          <CardDescription className="text-3xl text-gray-900 font-prestiregular uppercase">
+            Stay in the Know
           </CardDescription>
           <CardDescription className="text-lg text-gray-800 font-prestiregular">
             Be the first to hear about updates and shop our launch collection.

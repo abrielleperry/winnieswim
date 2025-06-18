@@ -13,7 +13,7 @@ export default function ComingSoonPage() {
 
         {/* Two-column layout for cards and form */}
         <section className="min-h-screen ">
-          <div className="grid lg:grid-cols-2 min-h-screen">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 px-4 py-12 sm:py-16 lg:py-24">
             {/* Left side - Draggable Cards */}
             <div className="flex items-center justify-center">
               <AboutSection />
@@ -26,7 +26,7 @@ export default function ComingSoonPage() {
               </div>
             </div>
           </div>
-          <VelocityScroll className="py-4 font-hopeless-romantic text-black">
+          <VelocityScroll className="py-2 font-hopeless-romantic text-black">
             More Sun + Less Clothes
           </VelocityScroll>
         </section>
