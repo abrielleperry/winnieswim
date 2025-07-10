@@ -12,7 +12,6 @@ export function VideoHero() {
   const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Multiple URL formats to try
   const videoUrls = [
     "https://github.com/abrielleperry/winnieswim/raw/main/public/videos/WinnieSwimAdNoLogo.mp4",
     "https://media.githubusercontent.com/media/abrielleperry/winnieswim/main/public/videos/WinnieSwimAdNoLogo.mp4",
@@ -22,19 +21,12 @@ export function VideoHero() {
   const currentVideoUrl = videoUrls[currentUrlIndex];
 
   useEffect(() => {
-    // Test URL accessibility
     const testUrl = async () => {
-      console.log(
-        `Testing URL ${currentUrlIndex + 1}/${videoUrls.length}:`,
-        currentVideoUrl
-      );
-
       try {
-        const response = await fetch(currentVideoUrl, {
+        await fetch(currentVideoUrl, {
           method: "HEAD",
-          mode: "no-cors", // Avoid CORS issues for testing
+          mode: "no-cors",
         });
-        console.log("URL test response:", response);
       } catch (error) {
         console.error("URL test failed:", error);
       }
@@ -47,7 +39,6 @@ export function VideoHero() {
   }, [currentUrlIndex, retryCount, currentVideoUrl]);
 
   const handleVideoLoad = () => {
-    console.log("✅ Video loaded successfully from:", currentVideoUrl);
     setVideoLoaded(true);
     setIsLoading(false);
     setVideoError(false);
@@ -59,54 +50,27 @@ export function VideoHero() {
     const video = e.currentTarget;
     const error = video.error;
 
-    console.error(
-      `❌ Video failed to load from URL ${currentUrlIndex + 1}:`,
-      currentVideoUrl
-    );
-
     if (error) {
-      console.error("Error code:", error.code);
-      console.error("Error message:", error.message);
-
-      switch (error.code) {
-        case MediaError.MEDIA_ERR_ABORTED:
-          console.error("Video loading was aborted");
-          break;
-        case MediaError.MEDIA_ERR_NETWORK:
-          console.error("Network error - URL might be inaccessible");
-          break;
-        case MediaError.MEDIA_ERR_DECODE:
-          console.error("Video decoding error");
-          break;
-        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-          console.error("Video format not supported");
-          break;
-        default:
-          console.error("Unknown video error");
-      }
+      console.error("Video error code:", error.code);
     } else {
-      console.error("No error details - likely CORS or 404 error");
+      console.error("Unknown video error");
     }
 
-    // Try next URL if available
     if (currentUrlIndex < videoUrls.length - 1) {
-      console.log("Trying next URL...");
       setCurrentUrlIndex((prev) => prev + 1);
     } else {
-      console.error("All URLs failed");
       setVideoError(true);
       setIsLoading(false);
     }
   };
 
   const handleCanPlay = () => {
-    console.log("🎬 Video can start playing");
     setIsLoading(false);
   };
 
   const retryVideoLoad = () => {
     setRetryCount((prev) => prev + 1);
-    setCurrentUrlIndex(0); // Reset to first URL
+    setCurrentUrlIndex(0);
     if (videoRef.current) {
       videoRef.current.load();
     }
@@ -127,7 +91,7 @@ export function VideoHero() {
         </div>
       )}
 
-      {/* Centered Video Container */}
+      {/* Video Background */}
       <div className="absolute inset-0 flex items-center justify-center z-5">
         <div className="relative w-full h-full">
           <div className="relative w-full h-full overflow-hidden">
@@ -152,7 +116,7 @@ export function VideoHero() {
         </div>
       </div>
 
-      {/* Error message */}
+      {/* Error Message */}
       {videoError && (
         <div className="absolute top-4 right-4 z-30 bg-red-500/90 backdrop-blur-sm text-white p-4 rounded-lg max-w-sm">
           <div className="flex items-start gap-3">
@@ -186,24 +150,29 @@ export function VideoHero() {
         </div>
       )}
 
-      {/* Content Overlay - Centered in the viewport */}
-      <div className="relative z-10 w-full h-full pt-16 flex flex-col items-center justify-center">
-        <div className="w-full px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto">
-            <Image
-              src="/WSLogo-White.png"
-              alt="Winnie Swim Logo"
-              width={200}
-              height={200}
-              className="mx-auto mb-2 sm:mb-8 w-25 sm:w-40 md:w-48 lg:w-52 "
-              priority
-            />
-            <h1 className="text-2xl pb-6 sm:text-5xl md:text-6xl lg:text-7xl font-prestiregular tracking-tight text-white">
-              COMING SOON
-            </h1>
-          </div>
+      {/* Centered Content Overlay */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-0">
+        <div className="text-center mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+          <Image
+            src="/WSLogo-White.png"
+            alt="Winnie Swim Logo"
+            width={200}
+            height={200}
+            className="mx-auto mb-2 sm:mb-4 w-25 sm:w-40 md:w-48 lg:w-52"
+            priority
+          />
+          <h1 className="text-2xl pb-4 sm:text-5xl md:text-6xl lg:text-7xl font-prestiregular tracking-tight text-white">
+            COMING SOON
+          </h1>
         </div>
       </div>
+      <p className="sr-only">
+        Winnie Swim is a swimwear brand founded by friends who believe in more
+        sun, less clothes, and meaningful memories. Whether you are lounging
+        poolside or chasing waves, our custom prints and flattering fits are
+        designed to help you feel confident and carefree. Discover why so many
+        love Winnie Swim.
+      </p>
     </section>
   );
 }

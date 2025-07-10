@@ -20,11 +20,18 @@ export function SignupForm() {
     setIsLoading(true);
     setError(null);
 
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+
+    console.log("Form values:", { firstName, lastName, email, phone });
+
     try {
       const result = await signupForUpdates(formData);
+      console.log("Supabase insert result:", result);
 
-      if (result.success) {
-      } else {
+      if (!result.success) {
         setError(result.error || "Something went wrong. Please try again.");
       }
     } catch (error) {
@@ -38,7 +45,7 @@ export function SignupForm() {
   return (
     <div className="flex items-center justify-center px-4 py-8 sm:py-12 md:py-20 lg:py-28">
       <Card
-        className=" border-0 max-w-md w-full"
+        className="border-0 max-w-lg w-full"
         style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 20px 30px" }}
       >
         <CardHeader className="text-center pb-2">
@@ -50,7 +57,14 @@ export function SignupForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form action={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleSubmit(formData);
+            }}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <label
                 htmlFor="firstName"
@@ -126,6 +140,7 @@ export function SignupForm() {
                 />
               </div>
             </div>
+
             <AnimatedSubscribeButton
               disabled={isLoading}
               className="w-full h-12 text-lg font-semibold bg-[#9FB8B0] hover:bg-[#9FB8B0] text-white border-0"

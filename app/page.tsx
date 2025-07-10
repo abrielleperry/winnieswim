@@ -19,13 +19,20 @@ export default function ComingSoonPage() {
               <AboutSection />
             </div>
 
-            {/* Right side - Signup Form */}
-            <div className="flex items-center justify-center">
-              <div className="w-full max-w-lg">
-                <SignupForm />
+            {/* Right side - Responsive Image */}
+            <div className="flex items-center justify-center px-4 sm:px-0">
+              <div className="w-full max-w-md md:max-w-lg lg:max-w-md xl:max-w-sm">
+                <img
+                  src="/owners.jpg"
+                  alt="Owners of the brand"
+                  className="w-full h-auto object-cover "
+                  style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 20px 30px" }}
+                />
               </div>
             </div>
           </div>
+          {/* Signup Form */}
+          <SignupForm />
           <VelocityScroll className="py-2 font-hopeless-romantic text-black">
             More Sun + Less Clothes
           </VelocityScroll>
