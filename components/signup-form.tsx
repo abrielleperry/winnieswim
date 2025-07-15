@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -9,12 +9,13 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { CheckIcon, ChevronRightIcon, Mail, User, Phone } from "lucide-react";
-import { signupForUpdates } from "@/app/actions/signup";
 import { AnimatedSubscribeButton } from "@/components/magicui/animated-subscribe-button";
+import { signupForUpdates } from "@/lib/signupForUpdates";
 
 export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true);
@@ -29,10 +30,12 @@ export function SignupForm() {
 
     try {
       const result = await signupForUpdates(formData);
-      console.log("Supabase insert result:", result);
+      console.log("API insert result:", result);
 
       if (!result.success) {
         setError(result.error || "Something went wrong. Please try again.");
+      } else {
+        formRef.current?.reset(); // ✅ Clear the form
       }
     } catch (error) {
       console.error("Signup form submission failed:", error);
@@ -58,6 +61,7 @@ export function SignupForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           <form
+            ref={formRef}
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
