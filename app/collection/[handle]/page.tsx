@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/navbar";
 import { shopifyFetch } from "@/lib/shopify";
 
 const PRODUCT_BY_HANDLE_QUERY = `
@@ -51,7 +50,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) {
     return (
       <>
-        <Navbar />
         <main className="min-h-screen bg-white px-4 py-24">
           <h1 className="text-3xl font-prestigesemibold text-gray-900">
             Product not found
@@ -68,8 +66,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
-      <Navbar />
-
       <main className="min-h-screen bg-white px-4 py-24">
         <section className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2">
           <div>

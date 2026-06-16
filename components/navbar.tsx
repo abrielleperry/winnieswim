@@ -1,24 +1,48 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
+import StaggeredMenu from "./StaggeredMenu";
 
-export function Navbar() {
+const menuItems = [
+  {
+    label: "Collection",
+    ariaLabel: "Go to home page",
+    link: "/collection",
+  },
+  {
+    label: "About Us",
+    ariaLabel: "Go to shop page",
+    link: "/about-us",
+  },
+  { label: "FAQ", ariaLabel: "Go to about page", link: "/faq" },
+  {
+    label: "Contact",
+    ariaLabel: "Go to contact page",
+    link: "/contact",
+  },
+];
+
+const socialItems = [
+  { label: "Twitter", link: "https://twitter.com" },
+  { label: "GitHub", link: "https://github.com" },
+  { label: "LinkedIn", link: "https://linkedin.com" },
+];
+
+export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[9999] bg-white/20 backdrop-blur-lg border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="flex justify-between items-center h-10 sm:h-13">
-          {/* Logo - Far Left */}
-          <div className="flex-shrink-0">
-            <Link
-              href="/"
-              className="flex items-center text-center font-prestiregular text-base md:text-xl text-gray-900"
-            >
-              WINNIESWIM
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <StaggeredMenu
+      isFixed={true}
+      position="right"
+      items={menuItems}
+      socialItems={socialItems}
+      displaySocials
+      displayItemNumbering={true}
+      menuButtonColor="#000000"
+      openMenuButtonColor="#000000"
+      changeMenuColorOnOpen={true}
+      colors={["#FCF2CD", "#DD8A46"]}
+      accentColor="#DD8A46"
+      onMenuOpen={() => console.log("Menu opened")}
+      onMenuClose={() => console.log("Menu closed")}
+    />
   );
 }

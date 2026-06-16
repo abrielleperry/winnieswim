@@ -1,4 +1,4 @@
-import { VideoHeroBRB } from "@/components/videoherobrb";
+import { VideoHero } from "@/components/video-hero";
 import { SignupForm } from "@/components/signup-form";
 import Navbar from "@/components/navbar";
 import { VelocityScroll } from "@/components/magicui/scroll-based-velocity";
@@ -32,6 +32,10 @@ export default function ComingSoonPage() {
             </div>
           </div>
           {/* Signup Form */}
+          <SignupForm />
+          <VelocityScroll className="py-2 font-hopeless-romantic text-black">
+            More Sun + Less Clothes
+          </VelocityScroll>
         </section>
       </main>
     </>

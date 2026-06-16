@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/navbar";
 import { ProductsSection } from "@/components/products";
 import { shopifyFetch } from "@/lib/shopify";
 
@@ -27,7 +26,7 @@ const PRODUCTS_QUERY = `
   }
 `;
 
-export default async function ProductsPage() {
+export default async function Collection() {
   const data = await shopifyFetch(PRODUCTS_QUERY);
 
   console.log("SHOPIFY DATA:", JSON.stringify(data, null, 2));
@@ -38,7 +37,6 @@ export default async function ProductsPage() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-white">
         <ProductsSection products={products} />
       </main>

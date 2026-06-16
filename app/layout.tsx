@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import Script from "next/script";
+import Navbar from "@/components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -148,6 +149,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${prestibold.variable} ${geistMono.variable} ${runlife.variable} ${gloria.variable} ${UTScript.variable} ${rekalgera.variable} ${prestiblack.variable} ${prestiregular.variable} ${prestisemibold.variable} ${hopelessromantic.variable} antialiased`}
       >
+        <Navbar />
         {children}
       </body>
     </html>
