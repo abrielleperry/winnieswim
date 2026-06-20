@@ -1,42 +1,14 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
 import localFont from "next/font/local";
 import Script from "next/script";
 import Navbar from "@/components/navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const runlife = localFont({
-  src: "../public/fonts/Runlife-Regular.woff2",
-  variable: "--font-runlife",
-  display: "swap",
-});
-
-const UTScript = localFont({
-  src: "../public/fonts/UTMynabaliScript.woff",
-  variable: "--font-utscript",
-  display: "swap",
-});
-
-const gloria = localFont({
-  src: "../public/fonts/GloriaRocha.woff",
-  variable: "--font-gloria",
-  display: "swap",
-});
-
-const rekalgera = localFont({
-  src: "../public/fonts/Rekalgera-Regular.woff",
-  variable: "--font-rekalgera",
+const prestibook = localFont({
+  src: "../public/fonts/PrestiDisplay-Book.woff",
+  variable: "--font-prestibook",
   display: "swap",
 });
 
@@ -147,7 +119,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${prestibold.variable} ${geistMono.variable} ${runlife.variable} ${gloria.variable} ${UTScript.variable} ${rekalgera.variable} ${prestiblack.variable} ${prestiregular.variable} ${prestisemibold.variable} ${hopelessromantic.variable} antialiased`}
+        className={` ${prestibold.variable}  ${prestiblack.variable} ${prestiregular.variable} ${prestisemibold.variable} ${prestibold.variable} ${prestibook.variable}  ${hopelessromantic.variable} antialiased`}
       >
         <Navbar />
         {children}

@@ -134,24 +134,12 @@
 
 /* Custom font utility classes */
 @layer utilities {
-  .font-runlife {
-    font-family: var(--font-runlife), sans-serif;
-  }
-
-  .font-gloria {
-    font-family: var(--font-gloria), serif;
-  }
-
-  .font-utscript {
-    font-family: var(--font-utscript), cursive;
-  }
-
-  .font-rekalgera {
-    font-family: var(--font-rekalgera), sans-serif;
-  }
-
   .font-prestiblack {
     font-family: var(--font-prestiblack), sans-serif;
+  }
+
+  .font-prestibold {
+    font-family: var(--font-prestibold), sans-serif;
   }
 
   .font-prestiregular {
@@ -160,6 +148,10 @@
 
   .font-prestisemibold {
     font-family: var(--font-prestisemibold), sans-serif;
+  }
+
+  .font-prestibook {
+    font-family: var(--font-prestibook), sans-serif;
   }
 
   .font-hopeless-romantic {

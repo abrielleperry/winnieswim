@@ -1,13 +1,11 @@
 import { VideoHero } from "@/components/video-hero";
-import { Navbar } from "@/components/navbar";
+import HomeMain from "@/components/home-main";
 
 export default function HeroPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen ">
-        <VideoHero />
-      </main>
-    </>
+    <main className="w-full min-h-screen">
+      <VideoHero />
+      <HomeMain />
+    </main>
   );
 }

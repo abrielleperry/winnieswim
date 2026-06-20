@@ -21,19 +21,14 @@ const menuItems = [
   },
 ];
 
-const socialItems = [
-  { label: "Twitter", link: "https://twitter.com" },
-  { label: "GitHub", link: "https://github.com" },
-  { label: "LinkedIn", link: "https://linkedin.com" },
-];
+const socialItems = [{ label: "Instagram", link: "https://twitter.com" }];
 
 export default function Navbar() {
   return (
     <StaggeredMenu
       isFixed={true}
-      position="right"
+      position="left"
       items={menuItems}
-      socialItems={socialItems}
       displaySocials
       displayItemNumbering={true}
       menuButtonColor="#000000"
@@ -43,6 +38,7 @@ export default function Navbar() {
       accentColor="#DD8A46"
       onMenuOpen={() => console.log("Menu opened")}
       onMenuClose={() => console.log("Menu closed")}
+      socialItems={socialItems}
     />
   );
 }

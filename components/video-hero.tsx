@@ -161,22 +161,8 @@ export function VideoHero() {
             className="mx-auto mb-2 sm:mb-4 w-25 sm:w-40 md:w-48 lg:w-52"
             priority
           />
-          <h1 className="text-2xl sm:text-2xl md:text-3xl lg:text-5xl font-prestiregular tracking-tight text-white">
-            Designed with Intention. Released Once.
-          </h1>
-          <p className="text-md sm:text-lg md:text-xl lg:text-2xl pb-4 font-prestiregular tracking-tight text-white">
-            Limited-edition swimwear inspired by places, memories, and moments
-            worth keeping.
-          </p>
         </div>
       </div>
-      <p className="sr-only">
-        Winnie Swim is a swimwear brand founded by friends who believe in more
-        sun, less clothes, and meaningful memories. Whether you are lounging
-        poolside or chasing waves, our custom prints and flattering fits are
-        designed to help you feel confident and carefree. Discover why so many
-        love Winnie Swim.
-      </p>
     </section>
   );
 }
