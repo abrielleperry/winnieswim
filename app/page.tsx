@@ -1,6 +1,6 @@
 import Navbar from "@/components/navbar";
 
-import HeroPage from "./hero/page";
+import HeroPage from "@/app/hero/page";
 
 export default function ComingSoonPage() {
   return (
