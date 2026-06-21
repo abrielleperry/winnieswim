@@ -515,6 +515,16 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
   }, [playClose, animateColor, animateText, onMenuClose]);
 
+  const closeCart = useCallback(() => {
+    if (cartOpenRef.current) {
+      cartOpenRef.current = false;
+      setCartOpen(false);
+      playCartClose();
+      animateCartText(false);
+    }
+  }, [playCartClose, animateCartText]);
+
+  // Click-outside for menu panel
   React.useEffect(() => {
     if (!closeOnClickAway || !open) return;
     const handleClickOutside = (event: MouseEvent) => {
@@ -533,6 +543,27 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     };
   }, [closeOnClickAway, open, closeMenu]);
 
+  // Click-outside for cart panel (all devices)
+  React.useEffect(() => {
+    if (!cartOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      // Find the cart button — it's the sibling of the menu toggle button
+      const cartBtn = document.querySelector(".sm-cart-btn");
+      if (
+        cartPanelRef.current &&
+        !cartPanelRef.current.contains(event.target as Node) &&
+        cartBtn &&
+        !cartBtn.contains(event.target as Node)
+      ) {
+        closeCart();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [cartOpen, closeCart]);
+
   const rawColors =
     colors && colors.length ? colors.slice(0, 4) : ["#1e1e22", "#35353c"];
   let cartLayerColors = [...rawColors];
@@ -548,6 +579,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           ? "fixed top-0 left-0 w-screen h-screen overflow-hidden"
           : "w-full h-full"
       }`}
+      data-menu-open={open ? "true" : "false"}
     >
       <div
         className={
@@ -668,7 +700,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 }
                 animateCartText(target);
               }}
-              className="sm-toggle relative inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto text-black min-w-[3rem]"
+              className="sm-cart-btn sm-toggle relative inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto text-black min-w-[3rem]"
               aria-label={cartOpen ? "Close cart" : "Open cart"}
               type="button"
             >
@@ -709,6 +741,42 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           style={{ WebkitBackdropFilter: "blur(12px)" }}
           aria-hidden={!open}
         >
+          {/* Mobile-only close button */}
+          <button
+            onClick={closeMenu}
+            className="sm-panel-close-btn md:hidden absolute top-5 right-5 w-9 h-9 flex items-center justify-center bg-transparent border-0 cursor-pointer text-black"
+            aria-label="Close menu"
+            type="button"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <line
+                x1="1"
+                y1="1"
+                x2="17"
+                y2="17"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17"
+                y1="1"
+                x2="1"
+                y2="17"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+
           <div className="sm-panel-inner flex-1 flex flex-col gap-5">
             <ul
               className="sm-panel-list list-none m-0 p-0 flex flex-col gap-2"
@@ -784,6 +852,42 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           style={{ width: "clamp(360px, 42vw, 540px)" }}
           aria-hidden={!cartOpen}
         >
+          {/* Mobile-only close button */}
+          <button
+            onClick={closeCart}
+            className="sm-panel-close-btn md:hidden absolute top-5 right-5 w-9 h-9 flex items-center justify-center bg-transparent border-0 cursor-pointer text-black"
+            aria-label="Close cart"
+            type="button"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <line
+                x1="1"
+                y1="1"
+                x2="17"
+                y2="17"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17"
+                y1="1"
+                x2="1"
+                y2="17"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+
           <div className="flex-1 flex flex-col gap-5">
             <div className="mb-4">
               <h2 className="font-prestregular text-4xl leading-none tracking-[-2px] uppercase">
@@ -975,8 +1079,17 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-panel-item:hover { color: var(--sm-accent, #ff0000); }
 .sm-scope .sm-panel-list[data-numbering] { counter-reset: smItem; }
 .sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { counter-increment: smItem; content: counter(smItem, decimal-leading-zero); position: absolute; top: 0.1em; right: 3.2em; font-size: 18px; font-weight: 400; color: var(--sm-accent, #ff0000); letter-spacing: 0; pointer-events: none; user-select: none; opacity: var(--sm-num-opacity, 0); }
+.sm-scope .sm-panel-close-btn { position: absolute; top: 1.25rem; right: 1.25rem; width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; color: #000; z-index: 10; padding: 0; }
+.sm-scope .sm-panel-close-btn:hover { opacity: 0.5; }
+@media (min-width: 768px) { .sm-scope .sm-panel-close-btn { display: none !important; } }
 @media (max-width: 1024px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
 @media (max-width: 640px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
+@media (max-width: 767px) {
+  .sm-scope .sm-panel-item { font-size: clamp(1.75rem, 8vw, 2.25rem); display: inline-block; padding-right: 1.1em; }
+  .sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { top: 0.1em; right: 1.5em; font-size: 11px; }
+  [data-menu-open="true"].sm-scope .staggered-menu-header .sm-toggle,
+  [data-menu-open="true"].sm-scope .staggered-menu-header .sm-cart-btn { visibility: hidden; pointer-events: none; }
+}
       `}</style>
     </div>
   );
