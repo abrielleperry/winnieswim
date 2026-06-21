@@ -65,12 +65,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     0,
   );
 
+  const [checkoutUrl, setCheckoutUrl] = useState<string>("");
+
   async function fetchCart() {
     try {
       const res = await fetch("/api/cart");
       const data = await res.json();
       setCartItems(data.items ?? []);
       setCartTotal(data.total_price ?? 0);
+      setCheckoutUrl(data.checkout_url ?? "");
     } catch {}
   }
 
@@ -893,18 +896,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       ${(cartTotal / 100).toFixed(2)}
                     </p>
                   </div>
+
                   <button
                     onClick={() => {
-                      const cartPath = cartItems
-                        .map((item) => {
-                          const numericId =
-                            item.variant_id ?? item.key?.split(":")[0];
-                          return `${numericId}:${item.quantity}`;
-                        })
-                        .join(",");
-                      const url = `https://winnieswim.myshopify.com/cart/${cartPath}`;
-                      console.log("checkout url:", url);
-                      window.location.href = url;
+                      if (checkoutUrl) window.location.href = checkoutUrl;
                     }}
                     className="checkout-shimmer-btn block w-full rounded-full px-8 py-4 text-center text-lg uppercase font-prestisemibold text-white transition-colors cursor-pointer border-0"
                   >

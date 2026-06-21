@@ -24,6 +24,7 @@ export async function GET() {
           cart(id: $cartId) {
             id
             totalQuantity
+            checkoutUrl
             cost { totalAmount { amount } }
             lines(first: 20) {
               edges {
@@ -58,6 +59,7 @@ export async function GET() {
   const items = cart.lines.edges.map(({ node }: any) => ({
     key: node.id,
     quantity: node.quantity,
+    variant_id: node.merchandise.id,
     product_title: node.merchandise.product.title,
     variant_title: node.merchandise.title,
     image: node.merchandise.image?.url,
@@ -70,5 +72,6 @@ export async function GET() {
     items,
     item_count: cart.totalQuantity,
     total_price: Math.round(parseFloat(cart.cost.totalAmount.amount) * 100),
+    checkout_url: cart.checkoutUrl,
   });
 }
