@@ -6,17 +6,13 @@ export default function CollectionPage() {
     <>
       <main className="min-h-screen">
         <section className="min-h-screen">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 px-4 py-12 sm:py-16 lg:py-24">
+          <div className="grid grid-cols-1 pb-10 lg:grid-cols-2 gap-12 lg:gap-0 px-4 pt-12 sm:pt-16 lg:pt-24">
             {/* Left side - East x West lockup */}
             {/* Left side - East x West lockup */}
             <div className="flex items-center justify-center px-4 sm:px-0">
-              <div className="flex w-full max-w-md flex-col gap-8">
-                <p className="font-prestibook text-[20px] uppercase tracking-[0.25em] text-[#aaa] sm:text-[20px] md:text-md">
-                  SS 2026 Collection
-                </p>
-
+              <div className="flex w-full max-w-md flex-col gap-4">
                 <div className="flex flex-col ">
-                  <p className="font-prestibold text-5xl  text-[#1a1a1a] sm:text-6xl md:text-7xl lg:text-8xl">
+                  <p className="font-prestiregular text-5xl  text-[#1a1a1a] sm:text-6xl md:text-7xl lg:text-8xl">
                     East
                   </p>
 
@@ -24,20 +20,32 @@ export default function CollectionPage() {
                     x
                   </p>
 
-                  <p className="font-prestibold text-5xl  text-[#1a1a1a] sm:text-6xl md:text-7xl lg:text-8xl">
+                  <p className="font-prestiregular text-5xl  text-[#1a1a1a] sm:text-6xl md:text-7xl lg:text-8xl">
                     West
                   </p>
                 </div>
 
-                <p className="font-prestisemibold text-base italic leading-relaxed text-[#424242] sm:text-[17px] md:text-lg">
-                  Designed with Intention. Released Once. <br /> Limited-edition
-                  swimwear inspired by places, memories, and moments worth
-                  keeping.
+                <p className="font-prestiregular text-base italic leading-relaxed text-[#424242] sm:text-[14px] md:text-md ">
+                  East x West was inspired by a friendship that began in the
+                  middle of the country and grew across two coasts.
+                </p>
+                <p className="font-prestiregular text-base italic leading-relaxed text-[#424242] sm:text-[14px] md:text-md ">
+                  Through numerous flights and visits, we experienced two
+                  completely different worlds while creating some of our
+                  favorite memories together. From busy city streets to coastal
+                  sunsets, each print in this collection reflects the places,
+                  moments, and experiences that shaped our journey.
+                </p>
+                <p className="font-prestiregular text-base italic leading-relaxed text-[#424242] sm:text-[14px] md:text-md">
+                  East x West is a celebration of friendship, distance, and the
+                  memories that make any place feel like home. Designed in
+                  limited quantities and released only once, each piece tells a
+                  story you'll never see repeated.
                 </p>
 
                 <Link
                   href="/products"
-                  className="self-start border border-[#1a1a1a] px-9 py-3 text-xs uppercase tracking-[0.18em] text-[#1a1a1a] transition-colors duration-200 hover:bg-[#1a1a1a] hover:text-[#faf9f7] sm:text-[13px]"
+                  className=" inline-block w-fit border border-black px-7 py-3 font-prestiregular text-[12px] uppercase tracking-[0.22em] text-black transition-colors duration-200 hover:bg-black hover:text-white"
                 >
                   Shop the Collection
                 </Link>
@@ -57,7 +65,7 @@ export default function CollectionPage() {
             </div>
           </div>
 
-          <VelocityScroll className="py-2 font-hopeless-romantic text-black">
+          <VelocityScroll className="font-hopeless-romantic text-black">
             More Sun + Less Clothes
           </VelocityScroll>
         </section>

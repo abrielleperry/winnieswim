@@ -21,7 +21,9 @@ const menuItems = [
   },
 ];
 
-const socialItems = [{ label: "Instagram", link: "https://twitter.com" }];
+const socialItems = [
+  { label: "Instagram", link: "https://www.instagram.com/winnieswwim/" },
+];
 
 export default function Navbar() {
   return (

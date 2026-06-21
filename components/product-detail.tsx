@@ -14,11 +14,7 @@ export function VariantProvider({ variants, options, children }: any) {
       Object.entries(selectedOptions).every(([, value]) =>
         v.title.toLowerCase().includes(value.toLowerCase()),
       ),
-    ) ?? variants.find((v: any) => v.availableForSale);
-
-  const checkoutUrl = selectedVariant?.availableForSale
-    ? `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}/cart/${selectedVariant.id.replace("gid://shopify/ProductVariant/", "")}:1`
-    : null;
+    ) ?? null;
 
   return (
     <VariantContext.Provider
@@ -27,7 +23,7 @@ export function VariantProvider({ variants, options, children }: any) {
         options,
         selectedOptions,
         setSelectedOptions,
-        checkoutUrl,
+        selectedVariant,
       }}
     >
       {children}
@@ -56,21 +52,27 @@ export function SizePills() {
               return (
                 <button
                   key={value}
-                  onClick={() =>
+                  onClick={() => {
+                    if (!isAvailable) return;
                     setSelectedOptions((prev: any) => ({
                       ...prev,
                       [option.name]: value,
-                    }))
-                  }
+                    }));
+                  }}
                   disabled={!isAvailable}
-                  className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                  className={`relative rounded-full border px-4 py-1.5 text-sm transition-colors ${
                     isSelected
                       ? "border-gray-900 bg-gray-900 text-white"
                       : isAvailable
                         ? "border-gray-300 text-gray-800 hover:border-gray-800"
-                        : "border-gray-100 text-gray-300 line-through cursor-not-allowed"
+                        : "border-gray-100 text-gray-300 cursor-not-allowed"
                   }`}
                 >
+                  {!isAvailable && (
+                    <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <span className="block h-px w-full rotate-45 bg-gray-300" />
+                    </span>
+                  )}
                   {value}
                 </button>
               );
@@ -83,23 +85,60 @@ export function SizePills() {
 }
 
 export function AddtoCartButton() {
-  const { selectedOptions, checkoutUrl } = useContext(VariantContext);
+  const { selectedOptions, selectedVariant, options } =
+    useContext(VariantContext);
+  const [loading, setLoading] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const allOptionsSelected = options.every(
+    (option: any) => selectedOptions[option.name],
+  );
+  const canAdd = allOptionsSelected && selectedVariant?.availableForSale;
+
+  async function handleAddToCart() {
+    if (!canAdd) return;
+    setLoading(true);
+
+    const variantId = selectedVariant.id.replace(
+      "gid://shopify/ProductVariant/",
+      "",
+    );
+
+    try {
+      await fetch("/api/cart/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [{ id: Number(variantId), quantity: 1 }],
+        }),
+      });
+      window.dispatchEvent(new CustomEvent("cart:updated"));
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch {}
+
+    setLoading(false);
+  }
+
   return (
     <div className="mt-5">
-      {checkoutUrl ? (
-        <a
-          href={checkoutUrl}
-          className="inline-block w-full rounded-full bg-gray-900 px-8 py-4 text-center text-sm uppercase tracking-widest text-white hover:bg-gray-700 transition-colors md:w-auto"
-        >
-          Add to Cart
-        </a>
-      ) : (
-        <p className="text-sm text-gray-400">
-          {Object.keys(selectedOptions).length === 0
-            ? "Select a size"
-            : "Currently unavailable"}
-        </p>
-      )}
+      <button
+        onClick={handleAddToCart}
+        disabled={!canAdd || loading}
+        className={`inline-block w-full rounded-full px-8 py-4 text-center text-sm uppercase tracking-widest transition-colors md:w-auto ${
+          canAdd
+            ? "bg-gray-900 text-white hover:bg-gray-700"
+            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+        } disabled:opacity-50`}
+      >
+        {loading
+          ? "Adding..."
+          : added
+            ? "Added!"
+            : !allOptionsSelected
+              ? "Select a size"
+              : "Add to Cart"}
+      </button>
     </div>
   );
 }

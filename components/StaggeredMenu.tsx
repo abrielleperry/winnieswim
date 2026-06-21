@@ -1,4 +1,11 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+"use client";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 
@@ -11,6 +18,7 @@ export interface StaggeredMenuSocialItem {
   label: string;
   link: string;
 }
+
 export interface StaggeredMenuProps {
   position?: "left" | "right";
   colors?: string[];
@@ -38,7 +46,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   displaySocials = true,
   displayItemNumbering = true,
   className,
-
   menuButtonColor = "#fff",
   openMenuButtonColor = "#fff",
   changeMenuColorOnOpen = true,
@@ -49,42 +56,76 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   onMenuClose,
 }: StaggeredMenuProps) => {
   const [open, setOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
+
+  const cartCount = cartItems.reduce(
+    (sum: number, item: any) => sum + item.quantity,
+    0,
+  );
+
+  async function fetchCart() {
+    try {
+      const res = await fetch("/api/cart");
+      const data = await res.json();
+      setCartItems(data.items ?? []);
+      setCartTotal(data.total_price ?? 0);
+    } catch {}
+  }
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  useEffect(() => {
+    const handler = () => fetchCart();
+    window.addEventListener("cart:updated", handler);
+    return () => window.removeEventListener("cart:updated", handler);
+  }, []);
+
   const openRef = useRef(false);
+  const cartOpenRef = useRef(false);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
 
-  const plusHRef = useRef<HTMLSpanElement | null>(null);
-  const plusVRef = useRef<HTMLSpanElement | null>(null);
-  const iconRef = useRef<HTMLSpanElement | null>(null);
+  const cartPanelRef = useRef<HTMLDivElement | null>(null);
+  const cartPreLayersRef = useRef<HTMLDivElement | null>(null);
+  const cartPreLayerElsRef = useRef<HTMLElement[]>([]);
 
   const textInnerRef = useRef<HTMLSpanElement | null>(null);
   const textWrapRef = useRef<HTMLSpanElement | null>(null);
   const [textLines, setTextLines] = useState<string[]>(["Menu", "Close"]);
 
+  const cartTextInnerRef = useRef<HTMLSpanElement | null>(null);
+  const cartTextWrapRef = useRef<HTMLSpanElement | null>(null);
+  const [cartTextLines, setCartTextLines] = useState<string[]>([
+    "Cart",
+    "Close",
+  ]);
+  const cartTextCycleAnimRef = useRef<gsap.core.Tween | null>(null);
+
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
-  const spinTweenRef = useRef<gsap.core.Timeline | null>(null);
+  const cartOpenTlRef = useRef<gsap.core.Timeline | null>(null);
+  const cartCloseTweenRef = useRef<gsap.core.Tween | null>(null);
   const textCycleAnimRef = useRef<gsap.core.Tween | null>(null);
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
-
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
   const busyRef = useRef(false);
-
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const panel = panelRef.current;
       const preContainer = preLayersRef.current;
-
-      const plusH = plusHRef.current;
-      const plusV = plusVRef.current;
-      const icon = iconRef.current;
+      const cartPanel = cartPanelRef.current;
+      const cartPreContainer = cartPreLayersRef.current;
       const textInner = textInnerRef.current;
 
-      if (!panel || !plusH || !plusV || !icon || !textInner) return;
+      if (!panel || !textInner) return;
 
       let preLayers: HTMLElement[] = [];
       if (preContainer) {
@@ -94,17 +135,31 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       }
       preLayerElsRef.current = preLayers;
 
-      const offscreen = position === "left" ? -100 : 100;
-      gsap.set([panel, ...preLayers], { xPercent: offscreen, opacity: 1 });
-      if (preContainer) {
-        gsap.set(preContainer, { xPercent: 0, opacity: 1 });
+      let cartPreLayers: HTMLElement[] = [];
+      if (cartPreContainer) {
+        cartPreLayers = Array.from(
+          cartPreContainer.querySelectorAll(".sm-cart-prelayer"),
+        ) as HTMLElement[];
       }
+      cartPreLayerElsRef.current = cartPreLayers;
 
-      gsap.set(plusH, { transformOrigin: "50% 50%", rotate: 0 });
-      gsap.set(plusV, { transformOrigin: "50% 50%", rotate: 90 });
-      gsap.set(icon, { rotate: 0, transformOrigin: "50% 50%" });
+      const offscreen = position === "left" ? -100 : 100;
+
+      gsap.set([panel, ...preLayers], { xPercent: offscreen, opacity: 1 });
+      if (preContainer) gsap.set(preContainer, { xPercent: 0, opacity: 1 });
+
+      if (cartPanel)
+        gsap.set([cartPanel, ...cartPreLayers], {
+          xPercent: offscreen,
+          opacity: 1,
+        });
+      if (cartPreContainer)
+        gsap.set(cartPreContainer, { xPercent: 0, opacity: 1 });
 
       gsap.set(textInner, { yPercent: 0 });
+
+      if (cartTextInnerRef.current)
+        gsap.set(cartTextInnerRef.current, { yPercent: 0 });
 
       if (toggleBtnRef.current)
         gsap.set(toggleBtnRef.current, { color: menuButtonColor });
@@ -170,9 +225,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     );
 
     if (itemEls.length) {
-      const itemsStartRatio = 0.15;
-      const itemsStart = panelInsertTime + panelDuration * itemsStartRatio;
-
+      const itemsStart = panelInsertTime + panelDuration * 0.15;
       tl.to(
         itemEls,
         {
@@ -184,7 +237,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         },
         itemsStart,
       );
-
       if (numberEls.length) {
         tl.to(
           numberEls,
@@ -201,7 +253,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     if (socialTitle || socialLinks.length) {
       const socialsStart = panelInsertTime + panelDuration * 0.4;
-
       if (socialTitle)
         tl.to(
           socialTitle,
@@ -217,9 +268,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             duration: 0.55,
             ease: "power3.out",
             stagger: { each: 0.08, from: "start" },
-            onComplete: () => {
-              gsap.set(socialLinks, { clearProps: "opacity" });
-            },
+            onComplete: () => gsap.set(socialLinks, { clearProps: "opacity" }),
           },
           socialsStart + 0.04,
         );
@@ -227,6 +276,46 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
 
     openTlRef.current = tl;
+    return tl;
+  }, [position]);
+
+  const buildCartOpenTimeline = useCallback(() => {
+    const panel = cartPanelRef.current;
+    const layers = cartPreLayerElsRef.current;
+    if (!panel) return null;
+
+    cartOpenTlRef.current?.kill();
+    if (cartCloseTweenRef.current) {
+      cartCloseTweenRef.current.kill();
+      cartCloseTweenRef.current = null;
+    }
+
+    const offscreen = position === "left" ? -100 : 100;
+    const layerStates = layers.map((el) => ({ el, start: offscreen }));
+    const panelStart = offscreen;
+
+    const tl = gsap.timeline({ paused: true });
+
+    layerStates.forEach((ls, i) => {
+      tl.fromTo(
+        ls.el,
+        { xPercent: ls.start },
+        { xPercent: 0, duration: 0.5, ease: "power4.out" },
+        i * 0.07,
+      );
+    });
+
+    const lastTime = layerStates.length ? (layerStates.length - 1) * 0.07 : 0;
+    const panelInsertTime = lastTime + (layerStates.length ? 0.08 : 0);
+
+    tl.fromTo(
+      panel,
+      { xPercent: panelStart },
+      { xPercent: 0, duration: 0.65, ease: "power4.out" },
+      panelInsertTime,
+    );
+
+    cartOpenTlRef.current = tl;
     return tl;
   }, [position]);
 
@@ -255,7 +344,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     const all: HTMLElement[] = [...layers, panel];
     closeTweenRef.current?.kill();
-
     const offscreen = position === "left" ? -100 : 100;
 
     closeTweenRef.current = gsap.to(all, {
@@ -268,7 +356,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           panel.querySelectorAll(".sm-panel-itemLabel"),
         ) as HTMLElement[];
         if (itemEls.length) gsap.set(itemEls, { yPercent: 140, rotate: 10 });
-
         const numberEls = Array.from(
           panel.querySelectorAll(
             ".sm-panel-list[data-numbering] .sm-panel-item",
@@ -276,7 +363,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         ) as HTMLElement[];
         if (numberEls.length)
           gsap.set(numberEls, { ["--sm-num-opacity" as any]: 0 });
-
         const socialTitle = panel.querySelector(
           ".sm-socials-title",
         ) as HTMLElement | null;
@@ -285,35 +371,35 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         ) as HTMLElement[];
         if (socialTitle) gsap.set(socialTitle, { opacity: 0 });
         if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0 });
-
         busyRef.current = false;
       },
     });
   }, [position]);
 
-  const animateIcon = useCallback((opening: boolean) => {
-    const icon = iconRef.current;
-    const h = plusHRef.current;
-    const v = plusVRef.current;
-    if (!icon || !h || !v) return;
+  const playCartOpen = useCallback(() => {
+    const tl = buildCartOpenTimeline();
+    if (tl) tl.play(0);
+  }, [buildCartOpenTimeline]);
 
-    spinTweenRef.current?.kill();
+  const playCartClose = useCallback(() => {
+    cartOpenTlRef.current?.kill();
+    cartOpenTlRef.current = null;
 
-    if (opening) {
-      // ensure container never rotates
-      gsap.set(icon, { rotate: 0, transformOrigin: "50% 50%" });
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power4.out" } })
-        .to(h, { rotate: 45, duration: 0.5 }, 0)
-        .to(v, { rotate: -45, duration: 0.5 }, 0);
-    } else {
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power3.inOut" } })
-        .to(h, { rotate: 0, duration: 0.35 }, 0)
-        .to(v, { rotate: 90, duration: 0.35 }, 0)
-        .to(icon, { rotate: 0, duration: 0.001 }, 0);
-    }
-  }, []);
+    const panel = cartPanelRef.current;
+    const layers = cartPreLayerElsRef.current;
+    if (!panel) return;
+
+    const all: HTMLElement[] = [...layers, panel];
+    cartCloseTweenRef.current?.kill();
+    const offscreen = position === "left" ? -100 : 100;
+
+    cartCloseTweenRef.current = gsap.to(all, {
+      xPercent: offscreen,
+      duration: 0.32,
+      ease: "power3.in",
+      overwrite: "auto",
+    });
+  }, [position]);
 
   const animateColor = useCallback(
     (opening: boolean) => {
@@ -351,13 +437,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const animateText = useCallback((opening: boolean) => {
     const inner = textInnerRef.current;
     if (!inner) return;
-
     textCycleAnimRef.current?.kill();
-
     const currentLabel = opening ? "Menu" : "Close";
     const targetLabel = opening ? "Close" : "Menu";
     const cycles = 3;
-
     const seq: string[] = [currentLabel];
     let last = currentLabel;
     for (let i = 0; i < cycles; i++) {
@@ -366,14 +449,37 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
     if (last !== targetLabel) seq.push(targetLabel);
     seq.push(targetLabel);
-
     setTextLines(seq);
     gsap.set(inner, { yPercent: 0 });
-
     const lineCount = seq.length;
     const finalShift = ((lineCount - 1) / lineCount) * 100;
-
     textCycleAnimRef.current = gsap.to(inner, {
+      yPercent: -finalShift,
+      duration: 0.5 + lineCount * 0.07,
+      ease: "power4.out",
+    });
+  }, []);
+
+  const animateCartText = useCallback((opening: boolean) => {
+    const inner = cartTextInnerRef.current;
+    if (!inner) return;
+    cartTextCycleAnimRef.current?.kill();
+    const currentLabel = opening ? "Cart" : "Close";
+    const targetLabel = opening ? "Close" : "Cart";
+    const cycles = 3;
+    const seq: string[] = [currentLabel];
+    let last = currentLabel;
+    for (let i = 0; i < cycles; i++) {
+      last = last === "Cart" ? "Close" : "Cart";
+      seq.push(last);
+    }
+    if (last !== targetLabel) seq.push(targetLabel);
+    seq.push(targetLabel);
+    setCartTextLines(seq);
+    gsap.set(inner, { yPercent: 0 });
+    const lineCount = seq.length;
+    const finalShift = ((lineCount - 1) / lineCount) * 100;
+    cartTextCycleAnimRef.current = gsap.to(inner, {
       yPercent: -finalShift,
       duration: 0.5 + lineCount * 0.07,
       ease: "power4.out",
@@ -384,7 +490,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     const target = !openRef.current;
     openRef.current = target;
     setOpen(target);
-
     if (target) {
       onMenuOpen?.();
       playOpen();
@@ -392,19 +497,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       onMenuClose?.();
       playClose();
     }
-
-    animateIcon(target);
     animateColor(target);
     animateText(target);
-  }, [
-    playOpen,
-    playClose,
-    animateIcon,
-    animateColor,
-    animateText,
-    onMenuOpen,
-    onMenuClose,
-  ]);
+  }, [playOpen, playClose, animateColor, animateText, onMenuOpen, onMenuClose]);
 
   const closeMenu = useCallback(() => {
     if (openRef.current) {
@@ -412,15 +507,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       setOpen(false);
       onMenuClose?.();
       playClose();
-      animateIcon(false);
       animateColor(false);
       animateText(false);
     }
-  }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
+  }, [playClose, animateColor, animateText, onMenuClose]);
 
   React.useEffect(() => {
     if (!closeOnClickAway || !open) return;
-
     const handleClickOutside = (event: MouseEvent) => {
       if (
         panelRef.current &&
@@ -431,12 +524,19 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         closeMenu();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closeOnClickAway, open, closeMenu]);
+
+  const rawColors =
+    colors && colors.length ? colors.slice(0, 4) : ["#1e1e22", "#35353c"];
+  let cartLayerColors = [...rawColors];
+  if (cartLayerColors.length >= 3) {
+    const mid = Math.floor(cartLayerColors.length / 2);
+    cartLayerColors.splice(mid, 1);
+  }
 
   return (
     <div
@@ -459,9 +559,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         data-position={position}
         data-open={open || undefined}
       >
+        {/* Menu pre-layers */}
         <div
           ref={preLayersRef}
-          className="sm-prelayers absolute top-0 right-0 bottom-0 pointer-events-none z-[5]"
+          className="sm-prelayers absolute top-0 left-0 bottom-0 pointer-events-none z-[5]"
           aria-hidden="true"
         >
           {(() => {
@@ -477,11 +578,27 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             return arr.map((c, i) => (
               <div
                 key={i}
-                className="sm-prelayer absolute top-0 right-0 h-full w-full translate-x-0"
+                className="sm-prelayer absolute top-0 left-0 h-full w-full translate-x-0"
                 style={{ background: c }}
               />
             ));
           })()}
+        </div>
+
+        {/* Cart pre-layers */}
+        <div
+          ref={cartPreLayersRef}
+          className="absolute top-0 left-0 bottom-0 pointer-events-none z-[15]"
+          aria-hidden="true"
+          style={{ width: "clamp(360px, 42vw, 540px)" }}
+        >
+          {cartLayerColors.map((c, i) => (
+            <div
+              key={i}
+              className="sm-cart-prelayer absolute top-0 left-0 h-full w-full"
+              style={{ background: c }}
+            />
+          ))}
         </div>
 
         <header
@@ -494,64 +611,98 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           >
             <Link
               href="/"
-              className="font-prestiregular text-black text-3xl tracking-wide no-underline"
+              className="font-prestiregular text-black text-sm md:text-3xl sm:text-sm tracking-wide no-underline"
             >
               WINNIESWIM
             </Link>
           </div>
 
-          <button
-            ref={toggleBtnRef}
-            className={`sm-toggle relative inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto ${
-              open ? "text-black" : "text-[#e9e9ef]"
-            }`}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            aria-controls="staggered-menu-panel"
-            onClick={toggleMenu}
-            type="button"
-          >
-            <span
-              ref={textWrapRef}
-              className="sm-toggle-textWrap relative inline-block h-[1em] overflow-hidden whitespace-nowrap w-[var(--sm-toggle-width,auto)] min-w-[var(--sm-toggle-width,auto)]"
-              aria-hidden="true"
+          <div className="flex items-center gap-6 pointer-events-auto">
+            {/* Menu button */}
+            <button
+              ref={toggleBtnRef}
+              className={`sm-toggle relative inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto min-w-[3.5rem] ${
+                open ? "text-black" : "text-black"
+              }`}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="staggered-menu-panel"
+              onClick={toggleMenu}
+              type="button"
             >
               <span
-                ref={textInnerRef}
-                className="sm-toggle-textInner flex flex-col leading-none"
+                ref={textWrapRef}
+                className="sm-toggle-textWrap relative inline-block h-[1em] overflow-hidden whitespace-nowrap w-[var(--sm-toggle-width,auto)] min-w-[var(--sm-toggle-width,auto)]"
+                aria-hidden="true"
               >
-                {textLines.map((l, i) => (
-                  <span
-                    className="sm-toggle-line block h-[1em] leading-none"
-                    key={i}
-                  >
-                    {l}
-                  </span>
-                ))}
+                <span
+                  ref={textInnerRef}
+                  className="sm-toggle-textInner flex flex-col leading-none"
+                >
+                  {textLines.map((l, i) => (
+                    <span
+                      className="sm-toggle-line block h-[1em] leading-none"
+                      key={i}
+                    >
+                      {l}
+                    </span>
+                  ))}
+                </span>
               </span>
-            </span>
+            </button>
 
-            <span
-              ref={iconRef}
-              className="sm-icon relative w-[14px] h-[14px] shrink-0 inline-flex items-center justify-center [will-change:transform]"
-              aria-hidden="true"
+            {/* Cart button */}
+            <button
+              onClick={() => {
+                const target = !cartOpenRef.current;
+                cartOpenRef.current = target;
+                setCartOpen(target);
+                if (target) {
+                  fetchCart();
+                  playCartOpen();
+                } else {
+                  playCartClose();
+                }
+                animateCartText(target);
+              }}
+              className="sm-toggle relative inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-medium leading-none overflow-visible pointer-events-auto text-black min-w-[3rem]"
+              aria-label={cartOpen ? "Close cart" : "Open cart"}
+              type="button"
             >
               <span
-                ref={plusHRef}
-                className="sm-icon-line absolute left-1/2 top-1/2 w-full h-[2px] bg-current rounded-[2px] -translate-x-1/2 -translate-y-1/2 [will-change:transform]"
-              />
-              <span
-                ref={plusVRef}
-                className="sm-icon-line sm-icon-line-v absolute left-1/2 top-1/2 w-full h-[2px] bg-current rounded-[2px] -translate-x-1/2 -translate-y-1/2 [will-change:transform]"
-              />
-            </span>
-          </button>
+                ref={cartTextWrapRef}
+                className="sm-toggle-textWrap relative inline-block h-[1em] overflow-hidden whitespace-nowrap w-[var(--sm-toggle-width,auto)] min-w-[var(--sm-toggle-width,auto)]"
+                aria-hidden="true"
+              >
+                <span
+                  ref={cartTextInnerRef}
+                  className="sm-toggle-textInner flex flex-col leading-none"
+                >
+                  {cartTextLines.map((l, i) => (
+                    <span
+                      className="sm-toggle-line block h-[1em] leading-none"
+                      key={i}
+                    >
+                      {l}
+                    </span>
+                  ))}
+                </span>
+              </span>
+              {/* Cart count badge */}
+              {cartCount > 0 && !cartOpen && (
+                <span className="text-sm font-prestisemibold text-gray-600">
+                  ({cartCount})
+                </span>
+              )}
+            </button>
+          </div>
         </header>
 
+        {/* Menu panel */}
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 h-full bg-white flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px] pointer-events-auto"
+          className="staggered-menu-panel absolute top-0 left-0 h-full bg-white flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px] pointer-events-auto"
           style={{ WebkitBackdropFilter: "blur(12px)" }}
           aria-hidden={!open}
         >
@@ -622,29 +773,196 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             )}
           </div>
         </aside>
+
+        {/* Cart panel */}
+        <div
+          ref={cartPanelRef}
+          className="absolute top-0 left-0 h-full bg-white flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-20 pointer-events-auto"
+          style={{ width: "clamp(360px, 42vw, 540px)" }}
+          aria-hidden={!cartOpen}
+        >
+          <div className="flex-1 flex flex-col gap-5">
+            <div className="mb-4">
+              <h2 className="font-prestregular text-4xl leading-none tracking-[-2px] uppercase">
+                Cart
+              </h2>
+            </div>
+
+            {cartItems.length === 0 ? (
+              <p className="text-sm text-gray-600">Your cart is empty.</p>
+            ) : (
+              <div className="flex flex-col flex-1">
+                <ul className="space-y-6 flex-1">
+                  {cartItems.map((item: any) => (
+                    <li key={item.key} className="flex gap-4 border-b pb-6">
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.product_title}
+                          className="h-24 w-16 rounded-lg object-cover"
+                        />
+                      )}
+                      <div className="flex flex-1 flex-col justify-between">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-lg text-gray-900">
+                              {item.product_title}
+                            </p>
+                            {/* size /*/}
+                            <p className="text-md font-prestisemibold text-gray-700">
+                              {item.variant_title}
+                            </p>
+                          </div>
+                          <button
+                            onClick={async () => {
+                              await fetch("/api/cart/update", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  lineId: item.key,
+                                  quantity: 0,
+                                }),
+                              });
+                              fetchCart();
+                            }}
+                            className="text-gray-300 hover:text-gray-600 bg-transparent border-0 cursor-pointer text-xs ml-2"
+                          >
+                            <img
+                              src="/trash-icon.png"
+                              alt="Remove"
+                              className="h-4 w-4"
+                            />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={async () => {
+                                await fetch("/api/cart/update", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    lineId: item.key,
+                                    quantity: item.quantity - 1,
+                                  }),
+                                });
+                                fetchCart();
+                              }}
+                              className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-400 text-gray-900 hover:border-gray-800 bg-transparent cursor-pointer text-sm leading-none"
+                            >
+                              −
+                            </button>
+                            {/* Quantity display */}
+                            <span className="text-md font-prestisemibold text-gray-700 w-4 text-center">
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={async () => {
+                                await fetch("/api/cart/update", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    lineId: item.key,
+                                    quantity: item.quantity + 1,
+                                  }),
+                                });
+                                fetchCart();
+                              }}
+                              className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-400 text-gray-900 hover:border-gray-800 bg-transparent cursor-pointer text-sm leading-none"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <p className="text-sm text-gray-900">
+                            ${(item.final_line_price / 100).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 border-t pt-6">
+                  <div className="flex justify-between mb-6">
+                    <p className="text-sm text-gray-500">Total</p>
+                    <p className="text-sm text-gray-900">
+                      ${(cartTotal / 100).toFixed(2)}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const cartPath = cartItems
+                        .map((item) => {
+                          const numericId =
+                            item.variant_id ?? item.key?.split(":")[0];
+                          return `${numericId}:${item.quantity}`;
+                        })
+                        .join(",");
+                      const url = `https://winnieswim.myshopify.com/cart/${cartPath}`;
+                      console.log("checkout url:", url);
+                      window.location.href = url;
+                    }}
+                    className="checkout-shimmer-btn block w-full rounded-full px-8 py-4 text-center text-lg uppercase font-prestisemibold text-white transition-colors cursor-pointer border-0"
+                  >
+                    Checkout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <style>{`
+      .checkout-shimmer-btn {
+  background: #212121;
+  position: relative;
+  overflow: hidden;
+}
+.checkout-shimmer-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.18) 60%,
+    transparent 100%
+  );
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { left: -100%; }
+  60%  { left: 150%; }
+  100% { left: 150%; }
+}
+.checkout-shimmer-btn:hover {
+  background: #222;
+}
 .sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; z-index: 40; pointer-events: none; }
 .sm-scope .staggered-menu-header { position: absolute; top: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 2em; background: transparent; pointer-events: none; z-index: 20; }
 .sm-scope .staggered-menu-header > * { pointer-events: auto; }
 .sm-scope .sm-logo { display: flex; align-items: center; user-select: none; }
-.sm-scope .sm-logo-img { display: block; height: 32px; width: auto; object-fit: contain; }
-.sm-scope .sm-toggle { position: relative; display: inline-flex; align-items: center; gap: 0.3rem; background: transparent; border: none; cursor: pointer; color: #e9e9ef; font-weight: 500; line-height: 1; overflow: visible; }
+.sm-scope .sm-toggle { position: relative; display: inline-flex; align-items: center; gap: 0.3rem; background: transparent; border: none; cursor: pointer; color: #000; font-weight: 500; line-height: 1; overflow: visible; }
 .sm-scope .sm-toggle:focus-visible { outline: 2px solid #ffffffaa; outline-offset: 4px; border-radius: 4px; }
-.sm-scope .sm-line:last-of-type { margin-top: 6px; }
 .sm-scope .sm-toggle-textWrap { position: relative; margin-right: 0.5em; display: inline-block; height: 1em; overflow: hidden; white-space: nowrap; width: var(--sm-toggle-width, auto); min-width: var(--sm-toggle-width, auto); }
 .sm-scope .sm-toggle-textInner { display: flex; flex-direction: column; line-height: 1; }
 .sm-scope .sm-toggle-line { display: block; height: 1em; line-height: 1; }
-.sm-scope .sm-icon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; display: inline-flex; align-items: center; justify-content: center; will-change: transform; }
 .sm-scope .sm-panel-itemWrap { position: relative; overflow: hidden; line-height: 1; }
-.sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .sm-line { display: none !important; }
-.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(360px, 42vw, 540px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; }
-.sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
-.sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: clamp(360px, 42vw, 540px); pointer-events: none; z-index: 5; }
-.sm-scope [data-position='left'] .sm-prelayers { right: auto; left: 0; }
-.sm-scope .sm-prelayer { position: absolute; top: 0; right: 0; height: 100%; width: 100%; transform: translateX(0); }
+.sm-scope .staggered-menu-panel { position: absolute; top: 0; left: 0; width: clamp(360px, 42vw, 540px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; }
+.sm-scope .sm-prelayers { position: absolute; top: 0; left: 0; bottom: 0; width: clamp(360px, 42vw, 540px); pointer-events: none; z-index: 5; }
+.sm-scope .sm-prelayer { position: absolute; top: 0; left: 0; height: 100%; width: 100%; transform: translateX(0); }
+.sm-scope .sm-cart-prelayer { position: absolute; top: 0; left: 0; height: 100%; width: 100%; }
 .sm-scope .sm-panel-inner { flex: 1; display: flex; flex-direction: column; gap: 1.25rem; }
 .sm-scope .sm-socials { margin-top: auto; padding-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .sm-scope .sm-socials-title { margin: 0; font-size: 1rem; font-weight: 500; color: var(--sm-accent, #ff0000); }
@@ -652,20 +970,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-socials-list .sm-socials-link { opacity: 1; transition: opacity 0.3s ease; }
 .sm-scope .sm-socials-list:hover .sm-socials-link:not(:hover) { opacity: 0.35; }
 .sm-scope .sm-socials-list:focus-within .sm-socials-link:not(:focus-visible) { opacity: 0.35; }
-.sm-scope .sm-socials-list .sm-socials-link:hover,
-.sm-scope .sm-socials-list .sm-socials-link:focus-visible { opacity: 1; }
+.sm-scope .sm-socials-list .sm-socials-link:hover, .sm-scope .sm-socials-list .sm-socials-link:focus-visible { opacity: 1; }
 .sm-scope .sm-socials-link:focus-visible { outline: 2px solid var(--sm-accent, #ff0000); outline-offset: 3px; }
 .sm-scope .sm-socials-link { font-size: 1.2rem; font-weight: 500; color: #111; text-decoration: none; position: relative; padding: 2px 0; display: inline-block; transition: color 0.3s ease, opacity 0.3s ease; }
 .sm-scope .sm-socials-link:hover { color: var(--sm-accent, #ff0000); }
-.sm-scope .sm-panel-title { margin: 0; font-size: 1rem; font-weight: 600; color: #fff; text-transform: uppercase; }
 .sm-scope .sm-panel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-.sm-scope .sm-panel-item { position: relative; color: #000; font-weight: 600;  font-size: clamp(3rem, 4.4vw, 3.6rem); cursor: pointer; line-height: 1; letter-spacing: -2px; text-transform: uppercase; transition: background 0.25s, color 0.25s; display: inline-block; text-decoration: none; padding-right: 1.4em; }
+.sm-scope .sm-panel-item { position: relative; color: #000; font-weight: 600; font-size: clamp(2.25rem, 3.4vw, 3rem); cursor: pointer; line-height: 0.95; letter-spacing: -1.5px; text-transform: uppercase; transition: background 0.25s, color 0.25s; display: inline-block; text-decoration: none; padding-right: 1.7em; }
 .sm-scope .sm-panel-itemLabel { display: inline-block; will-change: transform; transform-origin: 50% 100%; }
 .sm-scope .sm-panel-item:hover { color: var(--sm-accent, #ff0000); }
 .sm-scope .sm-panel-list[data-numbering] { counter-reset: smItem; }
 .sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { counter-increment: smItem; content: counter(smItem, decimal-leading-zero); position: absolute; top: 0.1em; right: 3.2em; font-size: 18px; font-weight: 400; color: var(--sm-accent, #ff0000); letter-spacing: 0; pointer-events: none; user-select: none; opacity: var(--sm-num-opacity, 0); }
-@media (max-width: 1024px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } .sm-scope .staggered-menu-wrapper[data-open] .sm-logo-img { filter: invert(100%); } }
-@media (max-width: 640px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } .sm-scope .staggered-menu-wrapper[data-open] .sm-logo-img { filter: invert(100%); } }
+@media (max-width: 1024px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
+@media (max-width: 640px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
       `}</style>
     </div>
   );

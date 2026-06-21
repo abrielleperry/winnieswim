@@ -85,105 +85,107 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 
   return (
-    <main className="min-h-screen bg-white px-6 py-20 md:px-12">
-      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:gap-16">
-        {/* Image column */}
-        <div className="flex flex-col gap-3">
-          {product.featuredImage?.url ? (
-            <img
-              src={product.featuredImage.url}
-              alt={product.featuredImage.altText || product.title}
-              className="aspect-[3/4] w-full rounded-2xl object-cover"
-            />
-          ) : (
-            <div className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl bg-gray-100 text-sm text-gray-400">
-              No image yet
-            </div>
-          )}
-
-          {/* Thumbnail strip if multiple images */}
-          {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {images.map((img: any, i: number) => (
-                <img
-                  key={i}
-                  src={img.url}
-                  alt={img.altText || `${product.title} ${i + 1}`}
-                  className="h-20 w-16 flex-shrink-0 rounded-lg object-cover opacity-70 hover:opacity-100 transition-opacity"
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Info column */}
-        <div className="flex flex-col">
-          {/* Breadcrumb */}
-          <Link
-            href="/products"
-            className="mb-6 text-xs uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ← All styles
-          </Link>
-
-          <h1 className="font-prestregular text-4xl leading-tight text-gray-900 md:text-5xl">
-            {product.title}
-          </h1>
-
-          <p className="mt-3 text-xl text-gray-600">${price}</p>
-
-          {/* Variant options */}
-          <VariantProvider variants={variants} options={options}>
-            <SizePills />
-
-            {/* Description */}
-            {product.description && (
-              <div className="mt-8 space-y-2 text-sm leading-relaxed text-gray-500">
-                {product.description
-                  .split(/(?=Details:|Fabric:|Size & Fit:)/)
-                  .map((section: string, i: number) => {
-                    const [label, ...rest] = section.split(":");
-                    const content = rest.join(":").trim();
-
-                    if (label === "Details") {
-                      const bullets = content
-                        .split(/(?=[A-Z])/)
-                        .map((s) => s.trim())
-                        .filter(Boolean);
-                      return (
-                        <div key={i}>
-                          <p className="mb-2 text-xs uppercase tracking-widest text-gray-400">
-                            Details
-                          </p>
-                          <ul className="space-y-0.0">
-                            {bullets.map((b, j) => (
-                              <li key={j} className="flex gap-0">
-                                <span className="flex-shrink-0"></span>
-                                {b}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div key={i}>
-                        <p className="mb-1 text-xs uppercase tracking-widest text-gray-400">
-                          {label.trim()}
-                        </p>
-                        <p>{content}</p>
-                      </div>
-                    );
-                  })}
+    <main className="min-h-screen bg-white px-6  md:px-12">
+      <section className="pt-28">
+        <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:gap-16">
+          {/* Image column */}
+          <div className="flex flex-col gap-3">
+            {product.featuredImage?.url ? (
+              <img
+                src={product.featuredImage.url}
+                alt={product.featuredImage.altText || product.title}
+                className="aspect-[3/4] w-full rounded-2xl object-cover"
+              />
+            ) : (
+              <div className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl bg-gray-100 text-sm text-gray-400">
+                No image yet
               </div>
             )}
 
-            {/* CTA */}
-            <AddtoCartButton />
-          </VariantProvider>
+            {/* Thumbnail strip if multiple images */}
+            {images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {images.map((img: any, i: number) => (
+                  <img
+                    key={i}
+                    src={img.url}
+                    alt={img.altText || `${product.title} ${i + 1}`}
+                    className="h-20 w-16 flex-shrink-0 rounded-lg object-cover opacity-70 hover:opacity-100 transition-opacity"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Info column */}
+          <div className="flex flex-col">
+            {/* Breadcrumb */}
+            <Link
+              href="/products"
+              className="mb-6 text-xs uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ← All styles
+            </Link>
+
+            <h1 className="font-prestregular text-4xl leading-tight text-gray-900 md:text-5xl">
+              {product.title}
+            </h1>
+
+            <p className="mt-3 text-xl text-gray-600">${price}</p>
+
+            {/* Variant options */}
+            <VariantProvider variants={variants} options={options}>
+              <SizePills />
+
+              {/* Description */}
+              {product.description && (
+                <div className="mt-8 space-y-2 text-sm leading-relaxed text-gray-500">
+                  {product.description
+                    .split(/(?=Details:|Fabric:|Size & Fit:)/)
+                    .map((section: string, i: number) => {
+                      const [label, ...rest] = section.split(":");
+                      const content = rest.join(":").trim();
+
+                      if (label === "Details") {
+                        const bullets = content
+                          .split(/(?=[A-Z])/)
+                          .map((s) => s.trim())
+                          .filter(Boolean);
+                        return (
+                          <div key={i}>
+                            <p className="mb-2 text-xs uppercase tracking-widest text-gray-400">
+                              Details
+                            </p>
+                            <ul className="space-y-0.0">
+                              {bullets.map((b, j) => (
+                                <li key={j} className="flex gap-0">
+                                  <span className="flex-shrink-0"></span>
+                                  {b}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div key={i}>
+                          <p className="mb-1 text-xs uppercase tracking-widest text-gray-400">
+                            {label.trim()}
+                          </p>
+                          <p>{content}</p>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+
+              {/* CTA */}
+              <AddtoCartButton />
+            </VariantProvider>
+          </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

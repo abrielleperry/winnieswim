@@ -75,10 +75,10 @@ export function FaqsAccordion({
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          <h2 className="mb-4 font-prestibold text-3xl text-foreground lg:text-4xl">
+          <h2 className="mb-4 font-prestisemibold text-3xl text-foreground lg:text-4xl">
             {title}
           </h2>
-          <p className="mx-auto max-w-2xl font-prestiregular text-foreground/70 text-lg">
+          <p className="mx-auto max-w-2xl font-prestiregular text-grey-700 text-lg">
             {description}
           </p>
         </motion.div>
@@ -157,7 +157,7 @@ export function FaqsAccordion({
                         delay: CONTENT_DELAY,
                       }}
                     >
-                      <p className="font-prestiregular text-foreground/70 leading-relaxed">
+                      <p className="font-prestiregular text-grey-700 leading-relaxed">
                         {faq.answer}
                       </p>
                     </motion.div>

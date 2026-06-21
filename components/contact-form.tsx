@@ -196,3 +196,5 @@ export function ContactForm() {
     </Modal>
   );
 }
+
+export default ContactForm;

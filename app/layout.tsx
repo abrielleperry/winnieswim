@@ -1,5 +1,8 @@
 import type React from "react";
 import type { Metadata } from "next";
+import { CartProvider } from "@/components/cart-context";
+
+// wrap children:
 
 import "./globals.css";
 import localFont from "next/font/local";
