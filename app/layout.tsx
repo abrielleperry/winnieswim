@@ -1,6 +1,5 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { CartProvider } from "@/components/cart-context";
 
 // wrap children:
 
