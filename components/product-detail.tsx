@@ -37,7 +37,7 @@ export function SizePills() {
   return (
     <>
       {options.map((option: any) => (
-        <div key={option.name} className="mt-8">
+        <div key={option.name} className="mt-6">
           <p className="mb-2 text-xs uppercase tracking-widest text-gray-400">
             {option.name}
           </p>

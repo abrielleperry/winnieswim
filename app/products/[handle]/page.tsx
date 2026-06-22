@@ -7,6 +7,8 @@ import {
   AddtoCartButton,
 } from "@/components/product-detail";
 
+import SizeGuideModal from "@/components/SizeGuideModal";
+
 const PRODUCT_BY_HANDLE_QUERY = `
   query ProductByHandle($handle: String!) {
     product(handle: $handle) {
@@ -77,7 +79,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const variants = product.variants.edges.map((edge: any) => edge.node);
   const images = product.images?.edges?.map((edge: any) => edge.node) ?? [];
 
-  // Group variants by option name for rendering selectors
   const options: { name: string; values: string[] }[] = product.options ?? [];
 
   const price = parseFloat(product.priceRange.minVariantPrice.amount).toFixed(
@@ -85,7 +86,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 
   return (
-    <main className="min-h-screen bg-white px-6  md:px-12">
+    <main className="min-h-screen bg-white px-6 md:px-12">
+      <SizeGuideModal />
+
       <section className="pt-28">
         <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:gap-16">
           {/* Image column */}
@@ -102,7 +105,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            {/* Thumbnail strip if multiple images */}
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {images.map((img: any, i: number) => (
@@ -118,8 +120,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           {/* Info column */}
-          <div className="flex flex-col">
-            {/* Breadcrumb */}
+          <div className="flex flex-col pb-8">
             <Link
               href="/products"
               className="mb-6 text-xs uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors"
@@ -133,11 +134,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             <p className="mt-3 text-xl text-gray-600">${price}</p>
 
-            {/* Variant options */}
             <VariantProvider variants={variants} options={options}>
               <SizePills />
 
-              {/* Description */}
               {product.description && (
                 <div className="mt-8 space-y-2 text-sm leading-relaxed text-gray-500">
                   {product.description
@@ -168,6 +167,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         );
                       }
 
+                      if (label.trim() === "Size & Fit") {
+                        return (
+                          <div key={i}>
+                            <p className="mb-1 text-xs uppercase tracking-widest text-gray-400">
+                              Size &amp; Fit
+                            </p>
+                            <p>
+                              {content}{" "}
+                              <button
+                                data-size-guide-trigger
+                                className="underline underline-offset-2 text-gray-400 hover:text-gray-700 transition-colors"
+                              >
+                                Size Guide
+                              </button>
+                            </p>
+                          </div>
+                        );
+                      }
+
                       return (
                         <div key={i}>
                           <p className="mb-1 text-xs uppercase tracking-widest text-gray-400">
@@ -180,7 +198,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </div>
               )}
 
-              {/* CTA */}
               <AddtoCartButton />
             </VariantProvider>
           </div>

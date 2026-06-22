@@ -1,7 +1,6 @@
 // app/faq/page.tsx
-
 "use client";
-
+import Image from "next/image";
 import FaqsAccordion from "@/components/smoothui/faq-2/index";
 
 const faqData = {
@@ -9,9 +8,29 @@ const faqData = {
   description: "Find answers to common questions about Winnie Swim.",
   faqs: [
     {
-      question: "What size should I order?",
+      question: "How should I care for my swimwear?",
       answer:
-        "We recommend using our Size Guide to find your best fit. Measure your bust, underbust, waist, and hips, then compare your measurements to the chart. If you're between sizes, we generally recommend sizing up for a more comfortable fit. Still unsure? Contact us at winnieswim@winnieswim.com and we'll be happy to help recommend a size.",
+        "Rinse your swimwear thoroughly in cool water after every wear. Chlorine, salt, sunscreen, and oils can impact the fabric over time. Avoid bleach, fabric softeners, and harsh detergents. Never wring or twist your swimwear. Gently remove excess water with a towel and lay flat in the shade to dry naturally.",
+    },
+    {
+      question: "What size should I order?",
+      answer: (
+        <>
+          We recommend using our Size Guide to find your best fit. Measure your
+          bust, underbust, waist, and hips, then compare your measurements to
+          the chart. If you&apos;re between sizes, we generally recommend sizing
+          up for a more comfortable fit. Still unsure? Contact us at{" "}
+          winnieswim@winnieswim.com and we&apos;ll be happy to help recommend a
+          size.
+          <Image
+            src="/size-guide.jpeg"
+            alt="Size guide"
+            width={300}
+            height={200}
+            className="my-4 items-center"
+          />
+        </>
+      ),
     },
     {
       question: "How does shipping work?",
@@ -24,11 +43,6 @@ const faqData = {
         "Because our collections are released in limited quantities, all WinnieSwim purchases are final sale. We are unable to offer returns, exchanges, refunds, or order cancellations. Please double-check your size and order details before checkout.",
     },
     {
-      question: "How should I care for my swimwear?",
-      answer:
-        "Rinse your swimwear thoroughly in cool water after every wear. Chlorine, salt, sunscreen, and oils can impact the fabric over time. Avoid bleach, fabric softeners, and harsh detergents. Never wring or twist your swimwear. Gently remove excess water with a towel and lay flat in the shade to dry naturally.",
-    },
-    {
       question: "Why doesn't WinnieSwim restock sold-out collections?",
       answer:
         "WinnieSwim is built around intentional drops. Each collection is inspired by a specific place, season, experience, or feeling and is designed to capture that moment in time. Rather than endlessly reproducing the same prints and colorways, we release limited collections that are created with purpose and meaning. Most prints and colorways are released once and are not restocked. Released once. Never repeated.",
@@ -37,7 +51,7 @@ const faqData = {
 };
 
 const FAQPage = () => (
-  <main className="min-h-screen w-full bg-white px-6  py-4">
+  <main className="min-h-screen w-full bg-white px-6 py-4">
     <FaqsAccordion {...faqData} />
   </main>
 );

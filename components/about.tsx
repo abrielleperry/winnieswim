@@ -5,7 +5,8 @@ import Image from "next/image";
 
 export function AboutSection() {
   return (
-    <section className="w-full px-4 sm:mt-16  sm:px-6 lg:px-16 bg-white">
+    // components/AboutSection.tsx
+    <section className="w-full px-4 mt-10 sm:mt-16 sm:px-6 lg:px-16 bg-white">
       <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto flex flex-col items-center text-center lg:text-left px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-prestiregular mb-6 text-gray-900 uppercase">
           About Us
@@ -33,7 +34,6 @@ export function AboutSection() {
         height={160}
         className="mx-auto w-24 sm:w-32 md:w-40 lg:w-48"
       />
-
       {/* } <Image
         src="/winnie-sign.png"
         alt="Winnie Swim Logo"

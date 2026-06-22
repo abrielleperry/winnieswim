@@ -17,7 +17,7 @@ interface FaqsAccordionProps {
   description?: string;
   faqs?: Array<{
     question: string;
-    answer: string;
+    answer: React.ReactNode;
   }>;
   title?: string;
 }
