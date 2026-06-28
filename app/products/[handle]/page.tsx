@@ -5,6 +5,7 @@ import {
   VariantProvider,
   SizePills,
   AddtoCartButton,
+  LowStockBadge,
 } from "@/components/product-detail";
 
 import SizeGuideModal from "@/components/SizeGuideModal";
@@ -40,6 +41,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
             id
             title
             availableForSale
+            quantityAvailable
             price {
               amount
               currencyCode
@@ -136,9 +138,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             <VariantProvider variants={variants} options={options}>
               <SizePills />
+              <LowStockBadge />
 
               {product.description && (
-                <div className="mt-8 space-y-2 text-sm leading-relaxed text-gray-500">
+                <div className="mt-4 space-y-2 text-sm leading-relaxed text-gray-500">
                   {product.description
                     .split(/(?=Details:|Fabric:|Size & Fit:)/)
                     .map((section: string, i: number) => {

@@ -142,3 +142,21 @@ export function AddtoCartButton() {
     </div>
   );
 }
+
+export function LowStockBadge() {
+  const { selectedVariant } = useContext(VariantContext);
+
+  if (
+    !selectedVariant ||
+    selectedVariant.quantityAvailable == null ||
+    selectedVariant.quantityAvailable <= 30
+  ) {
+    return null;
+  }
+
+  return (
+    <p className="mt-3 text-xs text-amber-600 tracking-wide">
+      Limited quantities left!
+    </p>
+  );
+}
