@@ -149,7 +149,7 @@ export function LowStockBadge() {
   if (
     !selectedVariant ||
     selectedVariant.quantityAvailable == null ||
-    selectedVariant.quantityAvailable <= 30
+    selectedVariant.quantityAvailable > 30
   ) {
     return null;
   }
